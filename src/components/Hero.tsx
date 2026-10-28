@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowDownRight, Sparkles, ShieldCheck, CheckCircle2, MapPin } from 'lucide-react';
+import { ArrowDownRight, Sparkles, ShieldCheck, CheckCircle2, MapPin, Phone } from 'lucide-react';
 
 interface HeroProps {
   onExploreGallery: () => void;
@@ -18,19 +18,19 @@ export const Hero: React.FC<HeroProps> = ({ onExploreGallery, onOpenCalculator }
               {/* Editorial Unboxed Kicker */}
               <div className="flex items-center gap-2 text-xs font-mono tracking-widest text-amber-700 dark:text-amber-400 uppercase mb-5 font-semibold">
                 <MapPin className="w-3.5 h-3.5" />
-                <span>Harare &middot; Victoria Falls &middot; Bulawayo</span>
+                <span>Harare &middot; Zimbabwe Nationwide</span>
                 <span aria-hidden="true">&middot;</span>
-                <span>RhinoSet Gypsum Skimming</span>
+                <span>Sean Ceilings Specialists</span>
               </div>
 
               {/* Primary Headline with text-wrap: balance */}
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold font-display tracking-tight text-stone-900 dark:text-[#F5F2EB] leading-[1.08] text-balance mb-6">
-                Interior wall &amp; ceiling skimming finished to mirror-flat perfection.
+                Sean Ceilings &mdash; Architectural drywall, bulkheads &amp; gypsum skimming.
               </h1>
 
               {/* Lead Paragraph */}
               <p className="text-base sm:text-lg text-stone-600 dark:text-stone-300 leading-relaxed max-w-xl mb-8">
-                Zimbabwe’s premier specialists in gypsum finishing plasters for modern residences, embassies, and architectural projects. Using Gyproc RhinoSet and traditional two-pass featheredge burnishing over RhinoBoard and brickwork, we eliminate joint shadows under intense African sunlight.
+                Welcome to <strong className="text-stone-900 dark:text-white">Sean Ceilings</strong>. We specialize in custom multi-tier tray ceilings, coffered designs, curved bulkheads, and Level 5 Gyproc RhinoSet wall and ceiling skimming for residences and commercial spaces across Harare and Zimbabwe.
               </p>
             </div>
 
@@ -40,7 +40,7 @@ export const Hero: React.FC<HeroProps> = ({ onExploreGallery, onOpenCalculator }
                 onClick={onExploreGallery}
                 className="inline-flex items-center gap-2 px-6 py-3.5 text-xs font-semibold tracking-wider uppercase bg-stone-900 hover:bg-stone-800 dark:bg-[#F5F2EB] dark:hover:bg-white text-white dark:text-stone-900 rounded-xl transition-all shadow-sm cursor-pointer"
               >
-                <span>Skim Projects Gallery</span>
+                <span>View Our Finished Ceilings</span>
                 <ArrowDownRight className="w-4 h-4" />
               </button>
 
@@ -50,15 +50,24 @@ export const Hero: React.FC<HeroProps> = ({ onExploreGallery, onOpenCalculator }
               >
                 <span>Instant USD Estimator</span>
               </button>
+
+              <a
+                href="https://wa.me/263777063455?text=Hello%20Sean%20Ceilings!%20I%20would%20like%20to%20get%20a%20quotation%20for%20my%20ceiling%20project."
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 hover:text-emerald-600 transition-colors"
+              >
+                <span>WhatsApp: +263 77 706 3455</span>
+              </a>
             </div>
           </div>
 
-          {/* Right Column: Hero Visual Container featuring Real Demo Photo */}
+          {/* Right Column: Hero Visual Container featuring Real Photo from User Zip */}
           <div className="lg:col-span-6 flex flex-col">
             <div className="relative flex-1 min-h-[380px] lg:min-h-[460px] rounded-3xl overflow-hidden border border-[#E7DFD5] dark:border-[#2E2A25] shadow-2xl bg-stone-900 flex flex-col group">
               <img
-                src="/src/assets/images/hero_gypsum_ceiling_1793096538489.jpg"
-                alt="Architectural Monolithic Gypsum Ceiling in Borrowdale Brooke Harare"
+                src="/assets/sean_ceilings/ceiling_02.jpg"
+                alt="Sean Ceilings Real Architectural Project in Harare"
                 className="w-full h-full object-cover object-center group-hover:scale-102 transition-transform duration-700"
               />
 
@@ -66,16 +75,16 @@ export const Hero: React.FC<HeroProps> = ({ onExploreGallery, onOpenCalculator }
               <div className="absolute bottom-5 inset-x-5 p-4 rounded-2xl bg-black/75 backdrop-blur-md border border-white/15 text-white flex items-center justify-between">
                 <div>
                   <div className="text-xs font-bold font-display text-white">
-                    Borrowdale Brooke Penthouse
+                    Sean Ceilings Project Showcase
                   </div>
                   <div className="text-[11px] font-mono text-amber-300 mt-0.5">
-                    Continuous 220m² RhinoSet Monolith · Level 5 SAZ Standard
+                    Custom Recessed Tray Ceiling &middot; Level 5 RhinoSet Skim
                   </div>
                 </div>
 
                 <div className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 text-xs font-mono border border-emerald-500/40">
                   <CheckCircle2 className="w-3.5 h-3.5" />
-                  <span>Raking Light Passed</span>
+                  <span>Real On-Site Work</span>
                 </div>
               </div>
             </div>
@@ -89,7 +98,7 @@ export const Hero: React.FC<HeroProps> = ({ onExploreGallery, onOpenCalculator }
               &le; 0.2mm
             </div>
             <div className="text-xs text-stone-500 dark:text-stone-400 mt-1">
-              Planar tolerance over 2-meter span
+              Dead-flat planar skim tolerance
             </div>
           </div>
 
@@ -104,10 +113,10 @@ export const Hero: React.FC<HeroProps> = ({ onExploreGallery, onOpenCalculator }
 
           <div>
             <div className="text-3xl sm:text-4xl font-bold font-display tracking-tight text-stone-900 dark:text-[#F5F2EB] font-mono tabular-nums">
-              26,000 m²
+              100+
             </div>
             <div className="text-xs text-stone-500 dark:text-stone-400 mt-1">
-              Ceilings &amp; walls skimmed in Zimbabwe
+              Custom ceiling projects in Zimbabwe
             </div>
           </div>
 
@@ -116,7 +125,7 @@ export const Hero: React.FC<HeroProps> = ({ onExploreGallery, onOpenCalculator }
               From $12/m²
             </div>
             <div className="text-xs text-stone-500 dark:text-stone-400 mt-1">
-              Transparent, competitive USD pricing
+              Competitive USD contractor rates
             </div>
           </div>
         </div>

@@ -5,10 +5,6 @@ import {
   CheckCircle2, 
   Clock, 
   Package, 
-  Sparkles, 
-  Phone, 
-  Mail, 
-  MapPin, 
   MessageSquare
 } from 'lucide-react';
 
@@ -40,7 +36,7 @@ export const QuotationCalculator: React.FC = () => {
 
   const substrateMultiplier = 
     substrate === 'rhinoboard' ? 1.0 :
-    substrate === 'brickwork' ? 1.25 : // Sand-cement brickwork requires bonding pass
+    substrate === 'brickwork' ? 1.25 :
     substrate === 'textured' ? 1.45 : 1.30;
 
   const projectMultiplier = 
@@ -53,7 +49,6 @@ export const QuotationCalculator: React.FC = () => {
   const estimatedMin = Math.round((calculatedBase + shadowlineCost) * 0.95);
   const estimatedMax = Math.round((calculatedBase + shadowlineCost) * 1.10);
 
-  // Bags of Gyproc RhinoSet (25kg)
   const estimatedBags = Math.ceil(areaM2 * (finishLevel === 'level5' ? 0.32 : 0.22));
   const estimatedDays = Math.max(2, Math.ceil(areaM2 / 40) + (includeShadowline ? 1 : 0));
 
@@ -64,7 +59,7 @@ export const QuotationCalculator: React.FC = () => {
     setIsSubmitting(true);
     setTimeout(() => {
       setIsSubmitting(false);
-      const randomRef = 'ZT-' + Math.floor(100000 + Math.random() * 900000);
+      const randomRef = 'SC-' + Math.floor(100000 + Math.random() * 900000);
       setSubmittedRef(randomRef);
     }, 600);
   };
@@ -75,13 +70,13 @@ export const QuotationCalculator: React.FC = () => {
         {/* Header */}
         <div className="max-w-2xl mb-12">
           <div className="text-xs font-mono tracking-widest text-amber-700 dark:text-amber-400 uppercase mb-2 font-semibold">
-            Zimbabwe Gypsum Estimations &middot; USD Rates
+            Sean Ceilings Estimations &middot; USD Rates
           </div>
           <h2 className="text-3xl sm:text-4xl font-bold font-display text-stone-900 dark:text-[#F5F2EB]">
-            Get a Detailed Skimming Quotation in USD
+            Get a Detailed Ceiling Quotation in USD
           </h2>
           <p className="text-sm text-stone-600 dark:text-stone-400 mt-2">
-            Calculate estimated material requirements and pricing for Gyproc RhinoBoard ceilings, plastered brickwork, or concrete skimming anywhere in Harare, Bulawayo, or Victoria Falls.
+            Calculate estimated material requirements and pricing for Sean Ceilings drywall framing, multi-tier bulkheads, Gyproc RhinoBoard, or plastered brickwork anywhere in Harare or nationwide.
           </p>
         </div>
 
@@ -97,7 +92,7 @@ export const QuotationCalculator: React.FC = () => {
             </h3>
 
             <p className="text-sm text-stone-600 dark:text-stone-400 mb-6">
-              Thank you, <strong className="text-stone-900 dark:text-white">{fullName}</strong>. Our senior estimator will review your project in <span className="text-amber-700 dark:text-amber-400 font-semibold">{projectSuburb}</span> and contact you via Phone or WhatsApp within 12 hours.
+              Thank you, <strong className="text-stone-900 dark:text-white">{fullName}</strong>. Sean Ceilings will review your project in <span className="text-amber-700 dark:text-amber-400 font-semibold">{projectSuburb}</span> and contact you via Phone or WhatsApp at <span className="font-semibold">+263 77 706 3455</span> shortly.
             </p>
 
             <div className="p-4 rounded-2xl bg-[#FAF8F5] dark:bg-[#151413] border border-[#E7DFD5] dark:border-[#2A2622] text-left text-xs font-mono space-y-2 mb-6">
@@ -106,7 +101,7 @@ export const QuotationCalculator: React.FC = () => {
                 <span className="text-stone-900 dark:text-white font-medium">{projectType} &middot; {areaM2}m²</span>
               </div>
               <div className="flex justify-between text-stone-500">
-                <span>Plaster Spec:</span>
+                <span>Ceiling Spec:</span>
                 <span className="text-stone-900 dark:text-white font-medium">{finishLevel.toUpperCase()}</span>
               </div>
               <div className="flex justify-between text-stone-500">
@@ -121,18 +116,18 @@ export const QuotationCalculator: React.FC = () => {
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
               <a
-                href={`https://wa.me/263772148920?text=Hi%20Rhino%20%26%20Trowel%2C%20my%20quotation%20reference%20is%20${submittedRef}%20for%20${areaM2}m2%20in%20${encodeURIComponent(projectSuburb)}`}
+                href={`https://wa.me/263777063455?text=Hi%20Sean%20Ceilings%2C%20my%20quotation%20reference%20is%20${submittedRef}%20for%20${areaM2}m2%20in%20${encodeURIComponent(projectSuburb)}`}
                 target="_blank"
                 rel="noreferrer"
                 className="w-full sm:w-auto px-5 py-2.5 text-xs font-bold uppercase tracking-wider bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl flex items-center justify-center gap-2"
               >
                 <MessageSquare className="w-3.5 h-3.5" />
-                <span>Chat Instantly on WhatsApp</span>
+                <span>Chat Instantly on WhatsApp (+263 77 706 3455)</span>
               </a>
 
               <button
                 onClick={() => setSubmittedRef(null)}
-                className="w-full sm:w-auto px-5 py-2.5 text-xs font-semibold uppercase tracking-wider bg-stone-900 dark:bg-white text-white dark:text-stone-900 rounded-xl hover:opacity-90"
+                className="w-full sm:w-auto px-5 py-2.5 text-xs font-semibold uppercase tracking-wider bg-stone-900 dark:bg-white text-white dark:text-stone-900 rounded-xl hover:opacity-90 cursor-pointer"
               >
                 Calculate Another
               </button>
@@ -145,7 +140,7 @@ export const QuotationCalculator: React.FC = () => {
               {/* 1. Project Type */}
               <div>
                 <label className="block text-xs font-mono uppercase text-amber-700 dark:text-amber-400 font-semibold mb-3">
-                  1. Project Type in Zimbabwe
+                  1. Project Type
                 </label>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                   <button
@@ -248,7 +243,7 @@ export const QuotationCalculator: React.FC = () => {
               {/* 3. Substrate Condition */}
               <div>
                 <label className="block text-xs font-mono uppercase text-amber-700 dark:text-amber-400 font-semibold mb-3">
-                  3. Substrate Condition (Common in Zimbabwe)
+                  3. Substrate Condition
                 </label>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                   <button
@@ -403,7 +398,7 @@ export const QuotationCalculator: React.FC = () => {
               <div className="p-6 rounded-3xl bg-stone-900 text-white border border-stone-800 shadow-xl mb-6">
                 <div className="text-[11px] font-mono text-amber-400 uppercase tracking-wider mb-2 flex items-center justify-between">
                   <span>Estimated Project Cost (USD)</span>
-                  <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300">Harare Rates</span>
+                  <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300">Sean Ceilings Rates</span>
                 </div>
 
                 <div className="text-3xl sm:text-4xl font-bold font-display tracking-tight text-white mb-2 tabular-nums">
@@ -432,17 +427,17 @@ export const QuotationCalculator: React.FC = () => {
                 className="p-6 rounded-3xl border border-[#E7DFD5] dark:border-[#2E2A25] bg-white dark:bg-[#1C1A17] space-y-4 shadow-xs"
               >
                 <div className="text-xs font-mono uppercase text-amber-700 dark:text-amber-400 font-bold tracking-wider">
-                  Direct Zimbabwean Site Booking
+                  Contact Sean Ceilings Direct
                 </div>
 
                 <div>
                   <label className="block text-[11px] font-medium text-stone-700 dark:text-stone-300 mb-1">
-                    Your Full Name / Architect Practice *
+                    Your Full Name *
                   </label>
                   <input
                     type="text"
                     required
-                    placeholder="e.g. Tendai Chidzero / Chidzero Architects"
+                    placeholder="e.g. Tendai Chidzero"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     className="w-full text-xs px-3 py-2.5 rounded-xl border border-[#E7DFD5] dark:border-[#332E29] bg-[#FAF8F5] dark:bg-[#151413] text-stone-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-amber-500"
@@ -457,7 +452,7 @@ export const QuotationCalculator: React.FC = () => {
                     <input
                       type="email"
                       required
-                      placeholder="tendai@studio.co.zw"
+                      placeholder="tendai@gmail.com"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       className="w-full text-xs px-3 py-2.5 rounded-xl border border-[#E7DFD5] dark:border-[#332E29] bg-[#FAF8F5] dark:bg-[#151413] text-stone-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-amber-500"
@@ -471,7 +466,7 @@ export const QuotationCalculator: React.FC = () => {
                     <input
                       type="tel"
                       required
-                      placeholder="+263 77 214 8920"
+                      placeholder="+263 77 ..."
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       className="w-full text-xs px-3 py-2.5 rounded-xl border border-[#E7DFD5] dark:border-[#332E29] bg-[#FAF8F5] dark:bg-[#151413] text-stone-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-amber-500"
@@ -481,12 +476,12 @@ export const QuotationCalculator: React.FC = () => {
 
                 <div>
                   <label className="block text-[11px] font-medium text-stone-700 dark:text-stone-300 mb-1">
-                    Project Location / Suburb *
+                    Project Suburb / City in Zimbabwe *
                   </label>
                   <input
                     type="text"
                     required
-                    placeholder="e.g. Borrowdale Brooke, Highlands, or Vic Falls"
+                    placeholder="e.g. Borrowdale Brooke, Highlands, or Glen Lorne"
                     value={projectSuburb}
                     onChange={(e) => setProjectSuburb(e.target.value)}
                     className="w-full text-xs px-3 py-2.5 rounded-xl border border-[#E7DFD5] dark:border-[#332E29] bg-[#FAF8F5] dark:bg-[#151413] text-stone-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-amber-500"
@@ -495,11 +490,11 @@ export const QuotationCalculator: React.FC = () => {
 
                 <div>
                   <label className="block text-[11px] font-medium text-stone-700 dark:text-stone-300 mb-1">
-                    Notes &amp; Substrate Remarks
+                    Ceiling Notes (e.g. Tray design, LED coves, brickwork)
                   </label>
                   <textarea
                     rows={2}
-                    placeholder="Mention ceiling heights, recessed light coves, rough brickwork or RhinoBoard status..."
+                    placeholder="Describe room heights, desired stepped bulkheads, or lighting preferences..."
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
                     className="w-full text-xs px-3 py-2.5 rounded-xl border border-[#E7DFD5] dark:border-[#332E29] bg-[#FAF8F5] dark:bg-[#151413] text-stone-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-amber-500 resize-none"
@@ -512,11 +507,11 @@ export const QuotationCalculator: React.FC = () => {
                   className="w-full py-3.5 text-xs font-semibold uppercase tracking-wider bg-amber-600 hover:bg-amber-500 text-white rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
                 >
                   <Send className="w-3.5 h-3.5" />
-                  <span>{isSubmitting ? 'Calculating Specification...' : 'Request Official Quotation (USD)'}</span>
+                  <span>{isSubmitting ? 'Calculating Specification...' : 'Request Quotation From Sean Ceilings'}</span>
                 </button>
 
                 <div className="text-[10px] text-center text-stone-400 font-mono">
-                  All work carries a 5-year guarantee against joint cracking &amp; peeling under SAZ standards.
+                  Direct WhatsApp: <a href="https://wa.me/263777063455" className="text-amber-600 hover:underline">+263 77 706 3455</a>
                 </div>
               </form>
             </div>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Sparkles, Check, ArrowRight, ShieldCheck, Sun, Layers, Compass } from 'lucide-react';
+import { Sparkles, ArrowRight, ShieldCheck } from 'lucide-react';
 
 interface CraftsmanshipShowcaseProps {
   onOpenCalculator: () => void;
@@ -11,35 +11,35 @@ export const CraftsmanshipShowcase: React.FC<CraftsmanshipShowcaseProps> = ({ on
   const steps = [
     {
       step: '01',
-      title: 'Substrate & Joint Stabilization',
-      subtitle: 'RhinoBoard & Plastered Brickwork Preparation',
-      description: 'Before any gypsum touch, joints in Gyproc RhinoBoard are reinforced with self-adhesive glass fiber mesh tape, and brick masonry is treated with KeyCoat bonding slurry to eliminate suction differentials.',
-      image: '/src/assets/images/demo_shadowline_room_1793096540420.jpg',
-      stat: '100% Tape Bond Guarantee',
+      title: 'Precision Steel Grid & RhinoBoard Installation',
+      subtitle: 'Rigid Framing & Substrate Alignment',
+      description: 'Sean Ceilings constructs laser-aligned galvanised steel ceiling grids, installing Gyproc RhinoBoard with tight staggered joints and recessed screws ready for joint reinforcement.',
+      image: '/assets/sean_ceilings/ceiling_12.jpg',
+      stat: 'Laser-Aligned Framework',
     },
     {
       step: '02',
-      title: 'First Base Skim Application',
-      subtitle: 'Dual-Pass Continuous Gypsum Matrix',
-      description: 'Using high-grade RhinoSet or RhinoLite, a first 1.5mm continuous coat is laid across the entire ceiling or wall plane, bringing uneven board dips and screw recesses into true planar alignment.',
-      image: '/src/assets/images/demo_trowel_craft_1793096539377.jpg',
-      stat: '<0.2mm Planar Deviation',
+      title: 'Architectural Bulkhead Framing & Joint Taping',
+      subtitle: 'Custom Step Downs & Fiber Mesh',
+      description: 'Multi-tier bulkheads and lighting trays are framed and clad with precision 90-degree corner beads. Fiber joint tape is embedded in Gyproc jointing compound to eliminate future settling cracks.',
+      image: '/assets/sean_ceilings/ceiling_17.jpg',
+      stat: 'Crack-Proof Jointing',
     },
     {
       step: '03',
-      title: 'Second Featheredge Pass & Burnishing',
-      subtitle: 'Water-Assisted Steel Trowel Glaze',
-      description: 'While the base plaster begins its initial set, our artisans apply a micro-fine featheredge glaze with 600mm stainless steel spatulas, closing all micro-pores to create an eggshell-smooth mirror plane with zero sanding dust.',
-      image: '/src/assets/images/hero_gypsum_ceiling_1793096538489.jpg',
-      stat: 'Zero Toxic Dust Sanding',
+      title: 'Multi-Pass RhinoSet Skim & Water Burnishing',
+      subtitle: 'Monolithic Gypsum Skim Application',
+      description: 'Our master plasterers apply two continuous coats of Gyproc RhinoSet across the entire ceiling plane, water-burnishing with wide stainless steel spatulas for an eggshell-smooth mirror plane.',
+      image: '/assets/sean_ceilings/ceiling_16.jpg',
+      stat: '0.0mm Planar Variation',
     },
     {
       step: '04',
-      title: 'Raking Light Inspection Sign-Off',
-      subtitle: '10° Highveld Sunlight Protocol',
-      description: 'Every ceiling and wall is inspected with a 1500-lumen directional grazing light held at an acute 10° angle. We guarantee zero joint ridges, no fastener dimples, and 100% uniform paint absorption.',
-      image: '/src/assets/images/demo_luxury_villa_1793096559393.jpg',
-      stat: 'SAZ & ASTM Level 5 Certified',
+      title: 'LED Lighting & Final Grazing Light Handover',
+      subtitle: 'Cove Illumination & Sign-off',
+      description: 'The completed ceiling is illuminated with recessed LED strip lights and downlights. We inspect under low-angle grazing illumination to guarantee zero ripples or joint telegraphing before painting.',
+      image: '/assets/sean_ceilings/ceiling_25.jpg',
+      stat: '100% Shadow-Free Guarantee',
     },
   ];
 
@@ -49,16 +49,16 @@ export const CraftsmanshipShowcase: React.FC<CraftsmanshipShowcaseProps> = ({ on
         {/* Section Header */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-14">
           <div>
-            <div className="flex items-center gap-2 text-xs font-mono tracking-widest text-amber-600 dark:text-amber-400 uppercase mb-2 font-semibold">
+            <div className="flex items-center gap-2 text-xs font-mono tracking-widest text-amber-700 dark:text-amber-400 uppercase mb-2 font-semibold">
               <Sparkles className="w-3.5 h-3.5" />
-              <span>Artisan Skimming Methodology</span>
+              <span>Sean Ceilings Methodology</span>
             </div>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-display text-stone-900 dark:text-[#F5F2EB] tracking-tight">
-              The 4-stage monolithic finish
+              From raw drywall to glowing architectural ceilings
             </h2>
           </div>
           <p className="text-sm text-stone-600 dark:text-stone-400 max-w-md leading-relaxed">
-            From Harare residences in Borrowdale to luxury safari lodges in Victoria Falls, our gypsum skimming process ensures ceilings and walls that remain dead-flat under the harshest sunlight.
+            See how Sean Ceilings builds, boards, joints, skims, and illuminates custom ceilings across Harare, Borrowdale, and Zimbabwe.
           </p>
         </div>
 
@@ -98,13 +98,13 @@ export const CraftsmanshipShowcase: React.FC<CraftsmanshipShowcaseProps> = ({ on
                 onClick={onOpenCalculator}
                 className="w-full py-3.5 px-5 rounded-xl font-semibold text-xs uppercase tracking-wider bg-amber-600 hover:bg-amber-500 text-white shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
-                <span>Calculate Your Project Quote in USD</span>
+                <span>Calculate Your Sean Ceilings Quote in USD</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
           </div>
 
-          {/* Right Column: High-Res Demo Photography Viewport */}
+          {/* Right Column: Real On-Site Photo Viewport */}
           <div className="lg:col-span-7 flex flex-col">
             <div className="relative flex-1 min-h-[420px] rounded-3xl overflow-hidden border border-[#E7DFD5] dark:border-[#2E2A25] shadow-xl bg-[#1C1A17] flex flex-col">
               <img

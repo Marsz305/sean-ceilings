@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Sun, Moon, ChevronDown, ArrowUpRight, Menu, X, ShieldCheck, Sparkles, Calculator, Layers } from 'lucide-react';
+import { Sun, Moon, ChevronDown, ArrowUpRight, Menu, X, ShieldCheck, Sparkles, Calculator, Layers, Phone } from 'lucide-react';
 import { PROJECTS } from '../data/portfolioData';
 
 interface HeaderProps {
@@ -49,7 +49,7 @@ export const Header: React.FC<HeaderProps> = ({
           href="#" 
           className="group flex items-baseline gap-2.5 text-xl font-bold tracking-tight text-stone-900 dark:text-[#F5F2EB] whitespace-nowrap shrink-0 transition-opacity hover:opacity-85"
         >
-          <span className="font-display tracking-tight text-amber-700 dark:text-amber-400">RHINO &amp; TROWEL</span>
+          <span className="font-display tracking-tight text-amber-700 dark:text-amber-400">SEAN CEILINGS</span>
           <span className="text-[11px] font-mono font-medium text-stone-500 dark:text-stone-400 hidden sm:inline">
             ZIMBABWE GYPSUM
           </span>
@@ -68,7 +68,7 @@ export const Header: React.FC<HeaderProps> = ({
                 activeMegaMenu === 'projects' ? 'text-amber-700 dark:text-amber-400 font-semibold' : ''
               }`}
             >
-              <span>Projects &amp; Portfolios</span>
+              <span>Our Ceiling Works</span>
               <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${activeMegaMenu === 'projects' ? 'rotate-180' : ''}`} />
             </button>
           </div>
@@ -84,7 +84,7 @@ export const Header: React.FC<HeaderProps> = ({
                 activeMegaMenu === 'systems' ? 'text-amber-700 dark:text-amber-400 font-semibold' : ''
               }`}
             >
-              <span>Gyproc &amp; RhinoSet Systems</span>
+              <span>Gypsum &amp; RhinoSet Systems</span>
               <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${activeMegaMenu === 'systems' ? 'rotate-180' : ''}`} />
             </button>
           </div>
@@ -95,7 +95,7 @@ export const Header: React.FC<HeaderProps> = ({
             onClick={(e) => { e.preventDefault(); handleNavClick('#craftsmanship'); }}
             className="py-2 hover:text-amber-700 dark:hover:text-amber-400 transition-colors whitespace-nowrap shrink-0"
           >
-            Artisan Method
+            Our Process
           </a>
 
           {/* Testimonials */}
@@ -104,7 +104,7 @@ export const Header: React.FC<HeaderProps> = ({
             onClick={(e) => { e.preventDefault(); handleNavClick('#testimonials'); }}
             className="py-2 hover:text-amber-700 dark:hover:text-amber-400 transition-colors whitespace-nowrap shrink-0"
           >
-            Client Reviews
+            Reviews
           </a>
 
           {/* Calculator Link */}
@@ -114,15 +114,25 @@ export const Header: React.FC<HeaderProps> = ({
             className="flex items-center gap-1.5 py-2 hover:text-amber-700 dark:hover:text-amber-400 transition-colors whitespace-nowrap shrink-0 text-amber-700 dark:text-amber-400 font-semibold"
           >
             <Calculator className="w-3.5 h-3.5" />
-            <span>USD Quotation</span>
+            <span>USD Quote</span>
           </a>
         </nav>
 
         {/* Zone 3: Actions */}
         <div className="flex items-center gap-3 shrink-0">
+          {/* Quick Call Link */}
+          <a
+            href="tel:+263777063455"
+            className="hidden md:flex items-center gap-1.5 text-xs font-mono font-medium text-stone-700 dark:text-stone-300 hover:text-amber-600 dark:hover:text-amber-400 py-1 px-2.5 rounded-lg border border-[#E7DFD5] dark:border-[#332E29]"
+            title="Call Sean Ceilings"
+          >
+            <Phone className="w-3.5 h-3.5 text-amber-600" />
+            <span>077 706 3455</span>
+          </a>
+
           <button
             onClick={onToggleDarkMode}
-            className="p-2.5 rounded-xl border border-[#E7DFD5] dark:border-[#332E29] bg-white dark:bg-[#1C1A17] text-stone-700 dark:text-stone-300 hover:border-amber-400 transition-colors"
+            className="p-2.5 rounded-xl border border-[#E7DFD5] dark:border-[#332E29] bg-white dark:bg-[#1C1A17] text-stone-700 dark:text-stone-300 hover:border-amber-400 transition-colors cursor-pointer"
             title={darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
             aria-label="Toggle Theme"
           >
@@ -139,7 +149,7 @@ export const Header: React.FC<HeaderProps> = ({
 
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2 rounded-xl text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800"
+            className="lg:hidden p-2 rounded-xl text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800 cursor-pointer"
             aria-label="Toggle Mobile Menu"
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -157,7 +167,7 @@ export const Header: React.FC<HeaderProps> = ({
             <div className="grid grid-cols-12 gap-8">
               <div className="col-span-4 border-r border-[#E7DFD5] dark:border-[#2E2A25] pr-6 space-y-4">
                 <span className="text-xs font-mono text-amber-700 dark:text-amber-400 uppercase tracking-wider font-semibold block">
-                  Zimbabwean Project Archives
+                  Sean Ceilings Portfolio Archives
                 </span>
                 <div className="space-y-1">
                   <a
@@ -166,10 +176,10 @@ export const Header: React.FC<HeaderProps> = ({
                     className="block p-3 rounded-xl hover:bg-white dark:hover:bg-[#1E1C19] transition-colors"
                   >
                     <div className="text-sm font-semibold text-stone-900 dark:text-[#F5F2EB]">
-                      Monolithic Ceilings (Borrowdale &amp; Highlands)
+                      Multi-Tier &amp; Tray Ceilings
                     </div>
                     <div className="text-xs text-stone-500 dark:text-stone-400 mt-0.5">
-                      Unbroken gypsum ceiling planes over RhinoBoard with zero joint flashing under harsh African sun.
+                      Recessed lighting trays, coffered grids, and contemporary bulkheads across Harare.
                     </div>
                   </a>
                   <a
@@ -178,10 +188,10 @@ export const Header: React.FC<HeaderProps> = ({
                     className="block p-3 rounded-xl hover:bg-white dark:hover:bg-[#1E1C19] transition-colors"
                   >
                     <div className="text-sm font-semibold text-stone-900 dark:text-[#F5F2EB]">
-                      Curved Bulkheads &amp; Safari Lodges (Vic Falls)
+                      Curved Radial Bulkheads &amp; Coves
                     </div>
                     <div className="text-xs text-stone-500 dark:text-stone-400 mt-0.5">
-                      Radial drywall bulkheads and cove lighting hand-finished with flexible gypsum spatulas.
+                      Seamless radial curves and circular cove lighting hand-shaped with precision.
                     </div>
                   </a>
                   <a
@@ -190,10 +200,10 @@ export const Header: React.FC<HeaderProps> = ({
                     className="block p-3 rounded-xl hover:bg-white dark:hover:bg-[#1E1C19] transition-colors"
                   >
                     <div className="text-sm font-semibold text-stone-900 dark:text-[#F5F2EB]">
-                      Masonry &amp; Brickwork Skimming
+                      RhinoBoard &amp; Brickwork Skimming
                     </div>
                     <div className="text-xs text-stone-500 dark:text-stone-400 mt-0.5">
-                      Direct skim coats over rough sand-cement plastered brick walls using Cretestone and RhinoSet.
+                      Direct skim coats over rough sand-cement plastered brick walls using RhinoSet.
                     </div>
                   </a>
                 </div>
@@ -202,7 +212,7 @@ export const Header: React.FC<HeaderProps> = ({
               <div className="col-span-8">
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-xs font-mono text-stone-500 dark:text-stone-400 uppercase tracking-wider">
-                    Featured Photography Portfolio
+                    Recent Sean Ceilings Installations
                   </span>
                   <a 
                     href="#gallery" 
@@ -262,12 +272,12 @@ export const Header: React.FC<HeaderProps> = ({
                   <span>Gyproc RhinoSet Level 5 Skim</span>
                 </div>
                 <p className="text-xs text-stone-600 dark:text-stone-400 mb-3 leading-relaxed">
-                  Formulated for application over Gyproc RhinoBoard ceiling and partition systems. Eliminates texture and suction differences across tapered joints and drywall screws.
+                  Sean Ceilings applies continuous 2.5mm RhinoSet coats over Gyproc RhinoBoard, eliminating texture and joint flash under morning Highveld light.
                 </p>
                 <div className="text-[11px] font-mono text-stone-500 dark:text-stone-400 space-y-1">
                   <div>· 2.0mm to 3.0mm continuous coat</div>
                   <div>· SAZ &amp; ASTM C840 Grade 5 compliant</div>
-                  <div>· Eliminates joint flashing under sun</div>
+                  <div>· Zero joint flashing guaranteed</div>
                 </div>
               </div>
 
@@ -277,27 +287,27 @@ export const Header: React.FC<HeaderProps> = ({
                   <span>Cretestone Concrete &amp; Brick Skim</span>
                 </div>
                 <p className="text-xs text-stone-600 dark:text-stone-400 mb-3 leading-relaxed">
-                  Direct gypsum plaster skim over rough sand-cement plastered brickwork and off-shutter concrete slabs common in Zimbabwean residential construction.
+                  Direct gypsum plaster skim over rough sand-cement plastered brickwork and concrete slabs common in Zimbabwean residential construction.
                 </p>
                 <div className="text-[11px] font-mono text-stone-500 dark:text-stone-400 space-y-1">
-                  <div>· Heavy-bond formulation</div>
+                  <div>· High-adhesion bonding primer</div>
                   <div>· No hacking of smooth concrete needed</div>
-                  <div>· Silky glass-like paint ready finish</div>
+                  <div>· Satin marble paint-ready finish</div>
                 </div>
               </div>
 
               <div className="p-5 rounded-2xl border border-[#E7DFD5] dark:border-[#2E2A25] bg-white dark:bg-[#1A1815]">
                 <div className="flex items-center gap-2 text-stone-900 dark:text-[#F5F2EB] font-bold text-sm mb-2">
                   <Sparkles className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-                  <span>Negative Shadowline Perimeter Reglets</span>
+                  <span>Custom Drywall Bulkheads &amp; Reglets</span>
                 </div>
                 <p className="text-xs text-stone-600 dark:text-stone-400 mb-3 leading-relaxed">
-                  Contemporary 15mm recessed perimeter shadow gaps that replace traditional timber or polystyrene cornices, giving ceilings a modern floating aesthetic.
+                  Stepped drop ceilings, coffered designs, and perimeter shadow gaps with concealed LED troughs that replace dated timber cornices.
                 </p>
                 <div className="text-[11px] font-mono text-stone-500 dark:text-stone-400 space-y-1">
-                  <div>· Clean minimalist perimeter margin</div>
+                  <div>· Symmetrical stepped designs</div>
                   <div>· Galvanized bead reinforcement</div>
-                  <div>· Thermal movement resistant</div>
+                  <div>· Integrated cove lighting</div>
                 </div>
               </div>
             </div>
@@ -314,21 +324,21 @@ export const Header: React.FC<HeaderProps> = ({
               onClick={(e) => { e.preventDefault(); handleNavClick('#gallery'); }}
               className="py-2 text-stone-800 dark:text-stone-200"
             >
-              Photography &amp; Projects Gallery
+              Our Ceiling Works Gallery
             </a>
             <a
               href="#craftsmanship"
               onClick={(e) => { e.preventDefault(); handleNavClick('#craftsmanship'); }}
               className="py-2 text-stone-800 dark:text-stone-200"
             >
-              Artisan Skimming Method
+              Our Installation Process
             </a>
             <a
               href="#plaster-systems"
               onClick={(e) => { e.preventDefault(); handleNavClick('#plaster-systems'); }}
               className="py-2 text-stone-800 dark:text-stone-200"
             >
-              Gyproc RhinoSet &amp; Standards
+              Gyproc RhinoSet Standards
             </a>
             <a
               href="#testimonials"
@@ -344,11 +354,18 @@ export const Header: React.FC<HeaderProps> = ({
             >
               Instant USD Quotation Calculator
             </a>
+            <a
+              href="tel:+263777063455"
+              className="py-2 flex items-center gap-2 text-amber-600 font-bold"
+            >
+              <Phone className="w-4 h-4" />
+              <span>Call: +263 77 706 3455</span>
+            </a>
           </nav>
 
           <button
             onClick={() => { setMobileMenuOpen(false); onOpenQuote(); }}
-            className="w-full py-3 text-center text-xs font-semibold uppercase tracking-wider bg-amber-600 hover:bg-amber-500 text-white rounded-xl shadow-xs"
+            className="w-full py-3 text-center text-xs font-semibold uppercase tracking-wider bg-amber-600 hover:bg-amber-500 text-white rounded-xl shadow-xs cursor-pointer"
           >
             Get Instant USD Quotation
           </button>

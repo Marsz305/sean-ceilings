@@ -1,20 +1,20 @@
 import React, { useState } from 'react';
-import { MessageCircle, X, Send, Sparkles, CheckCheck } from 'lucide-react';
+import { MessageCircle, X, Send, CheckCheck } from 'lucide-react';
 
 export const WhatsAppWidget: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState('');
 
-  const phoneNumber = '263772148920'; // Harare, Zimbabwe direct line
+  const phoneNumber = '263777063455'; // Sean Ceilings direct line
 
   const quickQuestions = [
-    'I need a ceiling skimming quotation in Harare.',
-    'What is your rate per m² for RhinoSet Level 5?',
-    'Can you skim over rough plastered brickwork?',
+    'Hi Sean Ceilings, I need a quotation for a tray ceiling in Harare.',
+    'What is your rate per m² for gypsum ceiling skimming?',
+    'Can Sean Ceilings do custom bulkheads and LED lighting?',
   ];
 
   const handleSendMessage = (textToSend?: string) => {
-    const finalMsg = textToSend || message || 'Hello Rhino & Trowel! I would like to inquire about gypsum wall and ceiling skimming.';
+    const finalMsg = textToSend || message || 'Hello Sean Ceilings! I would like to inquire about a ceiling or skimming quotation.';
     const encoded = encodeURIComponent(finalMsg);
     window.open(`https://wa.me/${phoneNumber}?text=${encoded}`, '_blank', 'noopener,noreferrer');
     setMessage('');
@@ -31,16 +31,16 @@ export const WhatsAppWidget: React.FC = () => {
             <div className="flex items-center gap-3">
               <div className="relative">
                 <div className="w-10 h-10 rounded-full bg-white/20 border border-white/40 flex items-center justify-center font-bold font-display text-white text-base">
-                  RT
+                  SC
                 </div>
                 <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-emerald-400 border-2 border-[#25D366]" />
               </div>
               <div>
                 <h4 className="text-sm font-bold text-white leading-tight">
-                  Rhino &amp; Trowel Estimator
+                  Sean Ceilings Zimbabwe
                 </h4>
                 <p className="text-[11px] text-white/90">
-                  Online &middot; Replies within 15 mins
+                  +263 77 706 3455 &middot; Online Now
                 </p>
               </div>
             </div>
@@ -56,13 +56,12 @@ export const WhatsAppWidget: React.FC = () => {
 
           {/* Chat Body */}
           <div className="p-4 bg-[#FAF8F5] dark:bg-[#151413] space-y-3">
-            {/* Incoming message bubble */}
             <div className="p-3.5 rounded-2xl rounded-tl-xs bg-white dark:bg-[#1E1C19] border border-[#E7DFD5] dark:border-[#2A2622] text-xs text-stone-800 dark:text-stone-200 shadow-2xs leading-relaxed">
               <p className="font-medium text-stone-900 dark:text-white mb-1">
-                Mhoro! Welcome to Rhino &amp; Trowel Zimbabwe.
+                Mhoro! Welcome to Sean Ceilings.
               </p>
               <p className="text-stone-600 dark:text-stone-400">
-                How can we help with your interior gypsum skimming or RhinoBoard project today?
+                Need modern bulkheads, RhinoBoard skimming, or a ceiling quote in Harare or nationwide? Chat with Sean directly!
               </p>
               <div className="mt-1.5 flex items-center justify-end gap-1 text-[10px] text-stone-400 font-mono">
                 <span>Just now</span>
@@ -70,7 +69,6 @@ export const WhatsAppWidget: React.FC = () => {
               </div>
             </div>
 
-            {/* Quick action prompts */}
             <div className="space-y-1.5 pt-1">
               <span className="text-[10px] font-mono text-stone-500 uppercase tracking-wider block">
                 Quick Inquiries:
@@ -98,7 +96,7 @@ export const WhatsAppWidget: React.FC = () => {
           >
             <input
               type="text"
-              placeholder="Type your WhatsApp message..."
+              placeholder="Type to chat with Sean..."
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               className="flex-1 text-xs px-3 py-2 rounded-xl bg-[#FAF8F5] dark:bg-[#151413] border border-[#E7DFD5] dark:border-[#2E2A25] text-stone-900 dark:text-white focus:outline-none focus:border-[#25D366]"
@@ -118,14 +116,14 @@ export const WhatsAppWidget: React.FC = () => {
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="group relative flex items-center gap-2.5 px-4 py-3.5 rounded-full bg-[#25D366] hover:bg-[#20bd5a] text-white shadow-[0_8px_24px_rgba(37,211,102,0.45)] hover:shadow-[0_12px_28px_rgba(37,211,102,0.6)] hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer"
-        aria-label="Chat on WhatsApp"
+        aria-label="Chat with Sean Ceilings on WhatsApp"
       >
         <span className="relative flex h-3 w-3">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
           <span className="relative inline-flex rounded-full h-3 w-3 bg-white"></span>
         </span>
 
-        {/* WhatsApp Icon (SVG for perfect branded fidelity) */}
+        {/* WhatsApp Icon */}
         <svg 
           className="w-6 h-6 fill-current" 
           viewBox="0 0 24 24"
@@ -134,7 +132,7 @@ export const WhatsAppWidget: React.FC = () => {
         </svg>
 
         <span className="hidden sm:inline font-bold text-xs tracking-wide">
-          WhatsApp Us
+          WhatsApp Sean
         </span>
       </button>
     </div>

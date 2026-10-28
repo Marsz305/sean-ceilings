@@ -43,10 +43,10 @@ export const HorizontalGallery: React.FC<HorizontalGalleryProps> = ({
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-[#E7DFD5] dark:border-[#262420]">
           <div>
             <div className="text-xs font-mono tracking-widest text-amber-700 dark:text-amber-400 uppercase mb-2 font-semibold">
-              Skimming Portfolio &middot; Zimbabwe
+              Sean Ceilings &middot; Zimbabwe Portfolio
             </div>
             <h2 className="text-3xl sm:text-4xl font-bold font-display text-stone-900 dark:text-[#F5F2EB]">
-              Selected Architectural Gypsum Works
+              Our Architectural Ceilings &amp; Bulkhead Projects
             </h2>
           </div>
 

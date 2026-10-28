@@ -145,16 +145,27 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
                 </div>
               </div>
 
-              <button
-                onClick={() => {
-                  onClose();
-                  onRequestQuote(project);
-                }}
-                className="w-full py-3.5 px-4 rounded-xl text-xs font-bold uppercase tracking-wider bg-amber-600 hover:bg-amber-500 text-white transition-colors flex items-center justify-center gap-2 shadow-xs cursor-pointer"
-              >
-                <span>Request USD Quote for this Finish</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
+              <div className="space-y-2.5">
+                <button
+                  onClick={() => {
+                    onClose();
+                    onRequestQuote(project);
+                  }}
+                  className="w-full py-3.5 px-4 rounded-xl text-xs font-bold uppercase tracking-wider bg-amber-600 hover:bg-amber-500 text-white transition-colors flex items-center justify-center gap-2 shadow-xs cursor-pointer"
+                >
+                  <span>Request USD Quote for this Finish</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+
+                <a
+                  href={`https://wa.me/263777063455?text=Hello%20Sean%20Ceilings!%20I%20am%20interested%20in%20a%20ceiling%20like%20${encodeURIComponent(project.title)}%20(${project.location})`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="w-full py-3 px-4 rounded-xl text-xs font-bold uppercase tracking-wider bg-emerald-600 hover:bg-emerald-500 text-white transition-colors flex items-center justify-center gap-2 shadow-xs"
+                >
+                  <span>Chat on WhatsApp (+263 77 706 3455)</span>
+                </a>
+              </div>
             </div>
           </div>
         </div>

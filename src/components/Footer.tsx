@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldCheck, ArrowUpRight, Phone, Mail, MapPin } from 'lucide-react';
+import { ShieldCheck, ArrowUpRight, Phone, Mail, MapPin, MessageSquare } from 'lucide-react';
 
 export const Footer: React.FC = () => {
   const scrollToTop = () => {
@@ -14,13 +14,13 @@ export const Footer: React.FC = () => {
           <div className="md:col-span-5 space-y-4">
             <div className="flex items-baseline gap-2.5">
               <span className="text-xl font-bold font-display text-amber-700 dark:text-amber-400">
-                RHINO &amp; TROWEL
+                SEAN CEILINGS
               </span>
               <span className="text-xs font-mono text-stone-400">ZIMBABWE GYPSUM</span>
             </div>
 
             <p className="text-xs leading-relaxed max-w-sm text-stone-500 dark:text-stone-400">
-              Specialist contractors and architectural consultants for interior gypsum wall &amp; ceiling skimming, RhinoBoard joints, Cretestone masonry skimming, and perimeter shadowline reglets in Zimbabwe.
+              Specialist contractors for architectural drywall ceilings, decorative multi-tier bulkheads, RhinoBoard jointing &amp; skimming, and gypsum plaster finishes across Harare and nationwide.
             </p>
 
             <div className="pt-2 flex items-center gap-2.5 text-xs font-mono text-stone-600 dark:text-stone-400">
@@ -32,17 +32,17 @@ export const Footer: React.FC = () => {
           {/* Quick Links */}
           <div className="md:col-span-3 space-y-3">
             <div className="text-xs font-mono uppercase text-stone-900 dark:text-white font-bold tracking-wider">
-              Navigation
+              Sean Ceilings
             </div>
             <ul className="space-y-2 text-xs">
               <li>
                 <a href="#gallery" className="hover:text-amber-600 dark:hover:text-amber-400 transition-colors">
-                  Photography Works Gallery
+                  Our Ceiling Projects Gallery
                 </a>
               </li>
               <li>
                 <a href="#craftsmanship" className="hover:text-amber-600 dark:hover:text-amber-400 transition-colors">
-                  4-Stage Skimming Method
+                  Our 4-Stage Installation Process
                 </a>
               </li>
               <li>
@@ -52,7 +52,7 @@ export const Footer: React.FC = () => {
               </li>
               <li>
                 <a href="#testimonials" className="hover:text-amber-600 dark:hover:text-amber-400 transition-colors">
-                  Harare Architect Reviews
+                  Client Reviews &amp; Testimonials
                 </a>
               </li>
               <li>
@@ -66,23 +66,31 @@ export const Footer: React.FC = () => {
           {/* Contact Details in Zimbabwe */}
           <div className="md:col-span-4 space-y-3">
             <div className="text-xs font-mono uppercase text-stone-900 dark:text-white font-bold tracking-wider">
-              Harare Studio &amp; Estimations
+              Harare Studio &amp; WhatsApp Direct
             </div>
-            <div className="text-xs space-y-2 text-stone-500 dark:text-stone-400 font-mono">
+            <div className="text-xs space-y-2.5 text-stone-500 dark:text-stone-400 font-mono">
               <div className="flex items-start gap-2">
                 <MapPin className="w-3.5 h-3.5 text-amber-600 shrink-0 mt-0.5" />
-                <span>18 Emmerson Mnangagwa Rd, Highlands, Harare, Zimbabwe</span>
+                <span>Harare, Zimbabwe (Operating across Borrowdale, Highlands, Glen Lorne &amp; Nationwide)</span>
               </div>
               <div className="flex items-center gap-2">
                 <Phone className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                <span>+263 (0) 772 148 920 &middot; +263 (0) 242 744 380</span>
+                <a href="tel:+263777063455" className="hover:text-amber-600 font-bold">+263 77 706 3455</a>
+              </div>
+              <div className="flex items-center gap-2">
+                <MessageSquare className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                <a 
+                  href="https://wa.me/263777063455" 
+                  target="_blank" 
+                  rel="noreferrer"
+                  className="text-emerald-700 dark:text-emerald-400 font-bold hover:underline"
+                >
+                  WhatsApp: +263 77 706 3455
+                </a>
               </div>
               <div className="flex items-center gap-2">
                 <Mail className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                <span>quotes@rhinoskim.co.zw</span>
-              </div>
-              <div className="pt-2 text-[11px] text-stone-400">
-                Active teams across Borrowdale, Highlands, Glen Lorne, Bulawayo &amp; Victoria Falls.
+                <span>quotes@seanceilings.co.zw</span>
               </div>
             </div>
           </div>
@@ -91,7 +99,7 @@ export const Footer: React.FC = () => {
         {/* Bottom Bar */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-stone-400">
           <div>
-            &copy; {new Date().getFullYear()} Rhino &amp; Trowel Zimbabwe. All architectural photography rights reserved.
+            &copy; {new Date().getFullYear()} Sean Ceilings Zimbabwe. All architectural project photography rights reserved.
           </div>
 
           <button
