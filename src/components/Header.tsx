@@ -42,21 +42,21 @@ export const Header: React.FC<HeaderProps> = ({
     <header className="sticky top-0 z-50 w-full backdrop-blur-md bg-[#FAF8F5]/90 dark:bg-[#121110]/90 border-b border-[#E7DFD5] dark:border-[#262420] transition-colors duration-200">
       <div 
         ref={navRef}
-        className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between gap-8"
+        className="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between gap-3 sm:gap-4 lg:gap-4 xl:gap-6"
       >
         {/* Zone 1: Brand Wordmark */}
         <a 
           href="#" 
-          className="group flex flex-col sm:flex-row sm:items-baseline sm:gap-2.5 text-xl font-bold tracking-tight text-stone-900 dark:text-[#F5F2EB] whitespace-nowrap shrink-0 transition-opacity hover:opacity-85"
+          className="group flex flex-col sm:flex-row sm:items-baseline sm:gap-2 text-lg sm:text-xl font-bold tracking-tight text-stone-900 dark:text-[#F5F2EB] whitespace-nowrap shrink-0 transition-opacity hover:opacity-85"
         >
           <span className="font-display tracking-tight text-amber-700 dark:text-amber-400">SEAN CEILINGS</span>
-          <span className="text-[10px] font-mono font-medium text-stone-500 dark:text-stone-400 hidden xl:inline">
-            CEILINGS &middot; DECK DROPPING &middot; SKIMMING &middot; PAINTING
+          <span className="text-[10px] font-mono font-medium text-stone-500 dark:text-stone-400 hidden 2xl:inline">
+            ZIMBABWE
           </span>
         </a>
 
         {/* Zone 2: Navigation Links */}
-        <nav className="hidden lg:flex items-center gap-7 text-sm font-medium text-stone-600 dark:text-stone-300">
+        <nav className="hidden lg:flex items-center gap-3.5 xl:gap-5 text-xs xl:text-sm font-medium text-stone-600 dark:text-stone-300">
           {/* Services Mega Menu */}
           <div 
             className="relative"
@@ -64,7 +64,7 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <button
               onClick={() => setActiveMegaMenu(activeMegaMenu === 'services' ? null : 'services')}
-              className={`flex items-center gap-1.5 py-2 hover:text-amber-700 dark:hover:text-amber-400 transition-colors whitespace-nowrap shrink-0 ${
+              className={`flex items-center gap-1 py-2 hover:text-amber-700 dark:hover:text-amber-400 transition-colors whitespace-nowrap shrink-0 ${
                 activeMegaMenu === 'services' ? 'text-amber-700 dark:text-amber-400 font-semibold' : ''
               }`}
             >
@@ -80,7 +80,7 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <button
               onClick={() => setActiveMegaMenu(activeMegaMenu === 'projects' ? null : 'projects')}
-              className={`flex items-center gap-1.5 py-2 hover:text-amber-700 dark:hover:text-amber-400 transition-colors whitespace-nowrap shrink-0 ${
+              className={`flex items-center gap-1 py-2 hover:text-amber-700 dark:hover:text-amber-400 transition-colors whitespace-nowrap shrink-0 ${
                 activeMegaMenu === 'projects' ? 'text-amber-700 dark:text-amber-400 font-semibold' : ''
               }`}
             >
@@ -106,32 +106,22 @@ export const Header: React.FC<HeaderProps> = ({
           >
             Reviews
           </a>
-
-          {/* Calculator Link */}
-          <a
-            href="#calculator"
-            onClick={(e) => { e.preventDefault(); handleNavClick('#calculator'); }}
-            className="flex items-center gap-1.5 py-2 hover:text-amber-700 dark:hover:text-amber-400 transition-colors whitespace-nowrap shrink-0 text-amber-700 dark:text-amber-400 font-semibold"
-          >
-            <Calculator className="w-3.5 h-3.5" />
-            <span>USD Quote</span>
-          </a>
         </nav>
 
         {/* Zone 3: Actions */}
-        <div className="flex items-center gap-3 shrink-0">
+        <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
           <a
             href="tel:+263777063455"
-            className="hidden md:flex items-center gap-1.5 text-xs font-mono font-medium text-stone-700 dark:text-stone-300 hover:text-amber-600 dark:hover:text-amber-400 py-1 px-2.5 rounded-lg border border-[#E7DFD5] dark:border-[#332E29]"
+            className="hidden xl:flex items-center gap-1.5 text-xs font-mono font-medium text-stone-700 dark:text-stone-300 hover:text-amber-600 dark:hover:text-amber-400 py-1.5 px-2.5 rounded-xl border border-[#E7DFD5] dark:border-[#332E29]"
             title="Call Sean Ceilings"
           >
             <Phone className="w-3.5 h-3.5 text-amber-600" />
-            <span>077 706 3455</span>
+            <span className="whitespace-nowrap">077 706 3455</span>
           </a>
 
           <button
             onClick={onToggleDarkMode}
-            className="p-2.5 rounded-xl border border-[#E7DFD5] dark:border-[#332E29] bg-white dark:bg-[#1C1A17] text-stone-700 dark:text-stone-300 hover:border-amber-400 transition-colors cursor-pointer"
+            className="p-2 sm:p-2.5 rounded-xl border border-[#E7DFD5] dark:border-[#332E29] bg-white dark:bg-[#1C1A17] text-stone-700 dark:text-stone-300 hover:border-amber-400 transition-colors cursor-pointer shrink-0"
             title={darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
             aria-label="Toggle Theme"
           >
@@ -140,7 +130,7 @@ export const Header: React.FC<HeaderProps> = ({
 
           <button
             onClick={onOpenQuote}
-            className="hidden sm:inline-flex items-center gap-2 px-5 py-2.5 text-xs font-semibold tracking-wider uppercase bg-amber-600 hover:bg-amber-500 text-white rounded-xl shadow-xs transition-all whitespace-nowrap cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 sm:px-4 sm:py-2.5 text-[11px] sm:text-xs font-semibold tracking-wider uppercase bg-amber-600 hover:bg-amber-500 text-white rounded-xl shadow-xs transition-all whitespace-nowrap cursor-pointer shrink-0"
           >
             <span>Get Quote (USD)</span>
             <ArrowUpRight className="w-3.5 h-3.5" />
@@ -148,7 +138,7 @@ export const Header: React.FC<HeaderProps> = ({
 
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2 rounded-xl text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800 cursor-pointer"
+            className="lg:hidden p-2 rounded-xl text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800 cursor-pointer shrink-0"
             aria-label="Toggle Mobile Menu"
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
