@@ -58,7 +58,7 @@ export const WhatsAppWidget: React.FC = () => {
           <div className="p-4 bg-[#FAF8F5] dark:bg-[#151413] space-y-3">
             <div className="p-3.5 rounded-2xl rounded-tl-xs bg-white dark:bg-[#1E1C19] border border-[#E7DFD5] dark:border-[#2A2622] text-xs text-stone-800 dark:text-stone-200 shadow-2xs leading-relaxed">
               <p className="font-medium text-stone-900 dark:text-white mb-1">
-                Mhoro! Welcome to Sean Ceilings.
+                Welcome to Sean Ceilings.
               </p>
               <p className="text-stone-600 dark:text-stone-400">
                 Need modern bulkheads, RhinoBoard skimming, or a ceiling quote in Harare or nationwide? Chat with Sean directly!
