@@ -71,17 +71,7 @@ export const HorizontalGallery: React.FC<HorizontalGalleryProps> = ({
                     : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white'
                 }`}
               >
-                Monolithic Ceilings
-              </button>
-              <button
-                onClick={() => setActiveFilter('walls')}
-                className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors whitespace-nowrap cursor-pointer ${
-                  activeFilter === 'walls'
-                    ? 'bg-amber-600 text-white shadow-xs'
-                    : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white'
-                }`}
-              >
-                Artisan Walls
+                Ceiling Design &amp; Install
               </button>
               <button
                 onClick={() => setActiveFilter('curved')}
@@ -91,7 +81,17 @@ export const HorizontalGallery: React.FC<HorizontalGalleryProps> = ({
                     : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white'
                 }`}
               >
-                Curved Bulkheads
+                Deck Dropping &amp; Bulkheads
+              </button>
+              <button
+                onClick={() => setActiveFilter('walls')}
+                className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors whitespace-nowrap cursor-pointer ${
+                  activeFilter === 'walls'
+                    ? 'bg-amber-600 text-white shadow-xs'
+                    : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white'
+                }`}
+              >
+                Wall Skimming &amp; Painting
               </button>
             </div>
 

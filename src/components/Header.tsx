@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Sun, Moon, ChevronDown, ArrowUpRight, Menu, X, ShieldCheck, Sparkles, Calculator, Layers, Phone } from 'lucide-react';
+import { Sun, Moon, ChevronDown, ArrowUpRight, Menu, X, ShieldCheck, Sparkles, Calculator, Layers, Phone, Paintbrush, Hammer } from 'lucide-react';
 import { PROJECTS } from '../data/portfolioData';
 
 interface HeaderProps {
@@ -15,7 +15,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenQuote,
   onSelectProject,
 }) => {
-  const [activeMegaMenu, setActiveMegaMenu] = useState<'projects' | 'systems' | null>(null);
+  const [activeMegaMenu, setActiveMegaMenu] = useState<'projects' | 'services' | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navRef = useRef<HTMLDivElement>(null);
 
@@ -47,16 +47,32 @@ export const Header: React.FC<HeaderProps> = ({
         {/* Zone 1: Brand Wordmark */}
         <a 
           href="#" 
-          className="group flex items-baseline gap-2.5 text-xl font-bold tracking-tight text-stone-900 dark:text-[#F5F2EB] whitespace-nowrap shrink-0 transition-opacity hover:opacity-85"
+          className="group flex flex-col sm:flex-row sm:items-baseline sm:gap-2.5 text-xl font-bold tracking-tight text-stone-900 dark:text-[#F5F2EB] whitespace-nowrap shrink-0 transition-opacity hover:opacity-85"
         >
           <span className="font-display tracking-tight text-amber-700 dark:text-amber-400">SEAN CEILINGS</span>
-          <span className="text-[11px] font-mono font-medium text-stone-500 dark:text-stone-400 hidden sm:inline">
-            ZIMBABWE GYPSUM
+          <span className="text-[10px] font-mono font-medium text-stone-500 dark:text-stone-400 hidden xl:inline">
+            CEILINGS &middot; DECK DROPPING &middot; SKIMMING &middot; PAINTING
           </span>
         </a>
 
         {/* Zone 2: Navigation Links */}
         <nav className="hidden lg:flex items-center gap-7 text-sm font-medium text-stone-600 dark:text-stone-300">
+          {/* Services Mega Menu */}
+          <div 
+            className="relative"
+            onMouseEnter={() => setActiveMegaMenu('services')}
+          >
+            <button
+              onClick={() => setActiveMegaMenu(activeMegaMenu === 'services' ? null : 'services')}
+              className={`flex items-center gap-1.5 py-2 hover:text-amber-700 dark:hover:text-amber-400 transition-colors whitespace-nowrap shrink-0 ${
+                activeMegaMenu === 'services' ? 'text-amber-700 dark:text-amber-400 font-semibold' : ''
+              }`}
+            >
+              <span>Our Specializations</span>
+              <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${activeMegaMenu === 'services' ? 'rotate-180' : ''}`} />
+            </button>
+          </div>
+
           {/* Projects Mega Menu */}
           <div 
             className="relative"
@@ -68,24 +84,8 @@ export const Header: React.FC<HeaderProps> = ({
                 activeMegaMenu === 'projects' ? 'text-amber-700 dark:text-amber-400 font-semibold' : ''
               }`}
             >
-              <span>Our Ceiling Works</span>
+              <span>Project Works</span>
               <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${activeMegaMenu === 'projects' ? 'rotate-180' : ''}`} />
-            </button>
-          </div>
-
-          {/* Plaster Systems Mega Menu */}
-          <div 
-            className="relative"
-            onMouseEnter={() => setActiveMegaMenu('systems')}
-          >
-            <button
-              onClick={() => setActiveMegaMenu(activeMegaMenu === 'systems' ? null : 'systems')}
-              className={`flex items-center gap-1.5 py-2 hover:text-amber-700 dark:hover:text-amber-400 transition-colors whitespace-nowrap shrink-0 ${
-                activeMegaMenu === 'systems' ? 'text-amber-700 dark:text-amber-400 font-semibold' : ''
-              }`}
-            >
-              <span>Gypsum &amp; RhinoSet Systems</span>
-              <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${activeMegaMenu === 'systems' ? 'rotate-180' : ''}`} />
             </button>
           </div>
 
@@ -95,7 +95,7 @@ export const Header: React.FC<HeaderProps> = ({
             onClick={(e) => { e.preventDefault(); handleNavClick('#craftsmanship'); }}
             className="py-2 hover:text-amber-700 dark:hover:text-amber-400 transition-colors whitespace-nowrap shrink-0"
           >
-            Our Process
+            Our 4-Stage Method
           </a>
 
           {/* Testimonials */}
@@ -120,7 +120,6 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Zone 3: Actions */}
         <div className="flex items-center gap-3 shrink-0">
-          {/* Quick Call Link */}
           <a
             href="tel:+263777063455"
             className="hidden md:flex items-center gap-1.5 text-xs font-mono font-medium text-stone-700 dark:text-stone-300 hover:text-amber-600 dark:hover:text-amber-400 py-1 px-2.5 rounded-lg border border-[#E7DFD5] dark:border-[#332E29]"
@@ -156,6 +155,78 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
         </div>
       </div>
+
+      {/* ================= MEGA MENU: SPECIALIZATIONS ================= */}
+      {activeMegaMenu === 'services' && (
+        <div 
+          onMouseLeave={() => setActiveMegaMenu(null)}
+          className="hidden lg:block absolute top-full left-0 w-full bg-[#FAF8F5] dark:bg-[#151413] border-b border-[#E7DFD5] dark:border-[#2E2A25] shadow-2xl transition-all animate-in fade-in duration-150"
+        >
+          <div className="max-w-7xl mx-auto px-6 py-8">
+            <div className="grid grid-cols-4 gap-6">
+              <div className="p-5 rounded-2xl border border-[#E7DFD5] dark:border-[#2E2A25] bg-white dark:bg-[#1A1815]">
+                <div className="flex items-center gap-2 text-stone-900 dark:text-[#F5F2EB] font-bold text-sm mb-2">
+                  <Hammer className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                  <span>Ceiling Installation &amp; Designing</span>
+                </div>
+                <p className="text-xs text-stone-600 dark:text-stone-400 mb-3 leading-relaxed">
+                  Bespoke architectural layout, timber and galvanised metal framework, Gyproc RhinoBoard hanging, recessed downlights, and custom chandelier structural anchors.
+                </p>
+                <div className="text-[11px] font-mono text-stone-500 dark:text-stone-400 space-y-1">
+                  <div>· Laser-aligned grid leveling</div>
+                  <div>· RhinoBoard 9.5mm &amp; 12.5mm</div>
+                  <div>· Custom 3D geometric designs</div>
+                </div>
+              </div>
+
+              <div className="p-5 rounded-2xl border border-[#E7DFD5] dark:border-[#2E2A25] bg-white dark:bg-[#1A1815]">
+                <div className="flex items-center gap-2 text-stone-900 dark:text-[#F5F2EB] font-bold text-sm mb-2">
+                  <Layers className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                  <span>Deck Dropping &amp; Bulkheads</span>
+                </div>
+                <p className="text-xs text-stone-600 dark:text-stone-400 mb-3 leading-relaxed">
+                  Precision suspended drops beneath concrete decks and slabs, stepped multi-level tray bulkheads, and concealed perimeter troughs for warm ambient LED lighting.
+                </p>
+                <div className="text-[11px] font-mono text-stone-500 dark:text-stone-400 space-y-1">
+                  <div>· Concrete deck drop ceilings</div>
+                  <div>· Stepped bulkheads &amp; tray coves</div>
+                  <div>· Seamless concealed LED channels</div>
+                </div>
+              </div>
+
+              <div className="p-5 rounded-2xl border border-[#E7DFD5] dark:border-[#2E2A25] bg-white dark:bg-[#1A1815]">
+                <div className="flex items-center gap-2 text-stone-900 dark:text-[#F5F2EB] font-bold text-sm mb-2">
+                  <Sparkles className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                  <span>Wall &amp; Ceiling Skimming</span>
+                </div>
+                <p className="text-xs text-stone-600 dark:text-stone-400 mb-3 leading-relaxed">
+                  Level 5 monolithic plaster skimming using Gyproc RhinoSet and Cretestone over drywall and rough cement-plastered brickwork to eradicate joint flashing.
+                </p>
+                <div className="text-[11px] font-mono text-stone-500 dark:text-stone-400 space-y-1">
+                  <div>· Level 5 ASTM C840 / SAZ</div>
+                  <div>· Water-burnished mirror finish</div>
+                  <div>· Direct over brickwork &amp; concrete</div>
+                </div>
+              </div>
+
+              <div className="p-5 rounded-2xl border border-[#E7DFD5] dark:border-[#2E2A25] bg-white dark:bg-[#1A1815]">
+                <div className="flex items-center gap-2 text-stone-900 dark:text-[#F5F2EB] font-bold text-sm mb-2">
+                  <Paintbrush className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                  <span>Professional Painting</span>
+                </div>
+                <p className="text-xs text-stone-600 dark:text-stone-400 mb-3 leading-relaxed">
+                  Full architectural painting services: plaster primer mist coats, acrylic emulsions, matte ceiling whites, and satin velvet finishes with clean lines.
+                </p>
+                <div className="text-[11px] font-mono text-stone-500 dark:text-stone-400 space-y-1">
+                  <div>· Plaster primer &amp; mist coating</div>
+                  <div>· High-spec washable emulsions</div>
+                  <div>· Razor-sharp shadowline cutting</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ================= MEGA MENU: PROJECTS ================= */}
       {activeMegaMenu === 'projects' && (
@@ -258,80 +329,27 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
       )}
 
-      {/* ================= MEGA MENU: SYSTEMS ================= */}
-      {activeMegaMenu === 'systems' && (
-        <div 
-          onMouseLeave={() => setActiveMegaMenu(null)}
-          className="hidden lg:block absolute top-full left-0 w-full bg-[#FAF8F5] dark:bg-[#151413] border-b border-[#E7DFD5] dark:border-[#2E2A25] shadow-2xl transition-all animate-in fade-in duration-150"
-        >
-          <div className="max-w-7xl mx-auto px-6 py-8">
-            <div className="grid grid-cols-3 gap-8">
-              <div className="p-5 rounded-2xl border border-[#E7DFD5] dark:border-[#2E2A25] bg-white dark:bg-[#1A1815]">
-                <div className="flex items-center gap-2 text-stone-900 dark:text-[#F5F2EB] font-bold text-sm mb-2">
-                  <ShieldCheck className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-                  <span>Gyproc RhinoSet Level 5 Skim</span>
-                </div>
-                <p className="text-xs text-stone-600 dark:text-stone-400 mb-3 leading-relaxed">
-                  Sean Ceilings applies continuous 2.5mm RhinoSet coats over Gyproc RhinoBoard, eliminating texture and joint flash under morning Highveld light.
-                </p>
-                <div className="text-[11px] font-mono text-stone-500 dark:text-stone-400 space-y-1">
-                  <div>· 2.0mm to 3.0mm continuous coat</div>
-                  <div>· SAZ &amp; ASTM C840 Grade 5 compliant</div>
-                  <div>· Zero joint flashing guaranteed</div>
-                </div>
-              </div>
-
-              <div className="p-5 rounded-2xl border border-[#E7DFD5] dark:border-[#2E2A25] bg-white dark:bg-[#1A1815]">
-                <div className="flex items-center gap-2 text-stone-900 dark:text-[#F5F2EB] font-bold text-sm mb-2">
-                  <Layers className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-                  <span>Cretestone Concrete &amp; Brick Skim</span>
-                </div>
-                <p className="text-xs text-stone-600 dark:text-stone-400 mb-3 leading-relaxed">
-                  Direct gypsum plaster skim over rough sand-cement plastered brickwork and concrete slabs common in Zimbabwean residential construction.
-                </p>
-                <div className="text-[11px] font-mono text-stone-500 dark:text-stone-400 space-y-1">
-                  <div>· High-adhesion bonding primer</div>
-                  <div>· No hacking of smooth concrete needed</div>
-                  <div>· Satin marble paint-ready finish</div>
-                </div>
-              </div>
-
-              <div className="p-5 rounded-2xl border border-[#E7DFD5] dark:border-[#2E2A25] bg-white dark:bg-[#1A1815]">
-                <div className="flex items-center gap-2 text-stone-900 dark:text-[#F5F2EB] font-bold text-sm mb-2">
-                  <Sparkles className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-                  <span>Custom Drywall Bulkheads &amp; Reglets</span>
-                </div>
-                <p className="text-xs text-stone-600 dark:text-stone-400 mb-3 leading-relaxed">
-                  Stepped drop ceilings, coffered designs, and perimeter shadow gaps with concealed LED troughs that replace dated timber cornices.
-                </p>
-                <div className="text-[11px] font-mono text-stone-500 dark:text-stone-400 space-y-1">
-                  <div>· Symmetrical stepped designs</div>
-                  <div>· Galvanized bead reinforcement</div>
-                  <div>· Integrated cove lighting</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* ================= MOBILE DRAWER ================= */}
       {mobileMenuOpen && (
         <div className="lg:hidden border-b border-[#E7DFD5] dark:border-[#262420] bg-[#FAF8F5] dark:bg-[#151413] px-6 py-6 space-y-4">
+          <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/40 text-xs font-medium text-amber-900 dark:text-amber-300">
+            Ceiling installation and designing &middot; deck dropping &middot; wall skimming &middot; painting
+          </div>
+
           <nav className="flex flex-col space-y-3 text-sm font-medium">
             <a
               href="#gallery"
               onClick={(e) => { e.preventDefault(); handleNavClick('#gallery'); }}
               className="py-2 text-stone-800 dark:text-stone-200"
             >
-              Our Ceiling Works Gallery
+              Our Ceiling Projects Gallery
             </a>
             <a
               href="#craftsmanship"
               onClick={(e) => { e.preventDefault(); handleNavClick('#craftsmanship'); }}
               className="py-2 text-stone-800 dark:text-stone-200"
             >
-              Our Installation Process
+              Our 4-Stage Method
             </a>
             <a
               href="#plaster-systems"

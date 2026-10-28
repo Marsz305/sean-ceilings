@@ -19,8 +19,8 @@ export const Footer: React.FC = () => {
               <span className="text-xs font-mono text-stone-400">ZIMBABWE GYPSUM</span>
             </div>
 
-            <p className="text-xs leading-relaxed max-w-sm text-stone-500 dark:text-stone-400">
-              Specialist contractors for architectural drywall ceilings, decorative multi-tier bulkheads, RhinoBoard jointing &amp; skimming, and gypsum plaster finishes across Harare and nationwide.
+            <p className="text-xs leading-relaxed max-w-sm text-stone-600 dark:text-stone-400">
+              Specialist contractors for <strong className="text-stone-900 dark:text-stone-200">ceiling installation and designing, deck dropping, wall skimming and painting</strong> across Harare and Zimbabwe nationwide.
             </p>
 
             <div className="pt-2 flex items-center gap-2.5 text-xs font-mono text-stone-600 dark:text-stone-400">

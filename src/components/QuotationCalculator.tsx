@@ -145,17 +145,6 @@ export const QuotationCalculator: React.FC = () => {
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                   <button
                     type="button"
-                    onClick={() => setProjectType('walls-ceiling')}
-                    className={`p-3 text-left rounded-2xl border text-xs font-medium transition-all cursor-pointer ${
-                      projectType === 'walls-ceiling'
-                        ? 'border-amber-600 bg-amber-600 text-white shadow-xs'
-                        : 'border-[#E7DFD5] dark:border-[#2E2A25] bg-white dark:bg-[#1C1A17] text-stone-700 dark:text-stone-300'
-                    }`}
-                  >
-                    Walls &amp; Ceilings
-                  </button>
-                  <button
-                    type="button"
                     onClick={() => setProjectType('ceiling')}
                     className={`p-3 text-left rounded-2xl border text-xs font-medium transition-all cursor-pointer ${
                       projectType === 'ceiling'
@@ -163,18 +152,8 @@ export const QuotationCalculator: React.FC = () => {
                         : 'border-[#E7DFD5] dark:border-[#2E2A25] bg-white dark:bg-[#1C1A17] text-stone-700 dark:text-stone-300'
                     }`}
                   >
-                    Ceilings Only
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setProjectType('commercial')}
-                    className={`p-3 text-left rounded-2xl border text-xs font-medium transition-all cursor-pointer ${
-                      projectType === 'commercial'
-                        ? 'border-amber-600 bg-amber-600 text-white shadow-xs'
-                        : 'border-[#E7DFD5] dark:border-[#2E2A25] bg-white dark:bg-[#1C1A17] text-stone-700 dark:text-stone-300'
-                    }`}
-                  >
-                    Commercial Atrium
+                    <div className="font-bold">Ceiling Install</div>
+                    <div className="text-[10px] opacity-80 mt-0.5">&amp; Designing</div>
                   </button>
                   <button
                     type="button"
@@ -185,7 +164,32 @@ export const QuotationCalculator: React.FC = () => {
                         : 'border-[#E7DFD5] dark:border-[#2E2A25] bg-white dark:bg-[#1C1A17] text-stone-700 dark:text-stone-300'
                     }`}
                   >
-                    Curved Bulkhead
+                    <div className="font-bold">Deck Dropping</div>
+                    <div className="text-[10px] opacity-80 mt-0.5">&amp; Bulkheads</div>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setProjectType('commercial')}
+                    className={`p-3 text-left rounded-2xl border text-xs font-medium transition-all cursor-pointer ${
+                      projectType === 'commercial'
+                        ? 'border-amber-600 bg-amber-600 text-white shadow-xs'
+                        : 'border-[#E7DFD5] dark:border-[#2E2A25] bg-white dark:bg-[#1C1A17] text-stone-700 dark:text-stone-300'
+                    }`}
+                  >
+                    <div className="font-bold">Wall Skimming</div>
+                    <div className="text-[10px] opacity-80 mt-0.5">&amp; RhinoSet</div>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setProjectType('walls-ceiling')}
+                    className={`p-3 text-left rounded-2xl border text-xs font-medium transition-all cursor-pointer ${
+                      projectType === 'walls-ceiling'
+                        ? 'border-amber-600 bg-amber-600 text-white shadow-xs'
+                        : 'border-[#E7DFD5] dark:border-[#2E2A25] bg-white dark:bg-[#1C1A17] text-stone-700 dark:text-stone-300'
+                    }`}
+                  >
+                    <div className="font-bold">Full Package</div>
+                    <div className="text-[10px] opacity-80 mt-0.5">Ceilings, Skim &amp; Paint</div>
                   </button>
                 </div>
               </div>

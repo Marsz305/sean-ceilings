@@ -22,7 +22,7 @@ export const PROJECTS: Project[] = [
     description: 'Custom multi-tiered tray ceiling constructed with precision steel framing and Gyproc RhinoBoard. Finished with two hand-burnished coats of RhinoSet gypsum plaster, creating a smooth monolithic plane with embedded warm cove LED illumination.',
     architect: 'Sean Ceilings Bespoke Installation',
     highlight: 'Zero joint flashing across 20-meter living area under directional cove lighting.',
-    imageUrl: '/assets/sean_ceilings/ceiling_02.jpg',
+    imageUrl: '/assets/sean_ceilings/hero_finished_ceiling.jpg',
     rakingAngle: '10° Cove Grazing Angle',
     specDetails: {
       substrate: 'Gyproc RhinoBoard 12.5mm on galvanised steel studs',
