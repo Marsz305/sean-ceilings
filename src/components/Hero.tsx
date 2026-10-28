@@ -56,13 +56,20 @@ export const Hero: React.FC<HeroProps> = ({ onExploreGallery, onOpenCalculator }
 
             {/* Action Buttons */}
             <div className="flex flex-wrap items-center gap-4 pt-2">
-              <button
-                onClick={onExploreGallery}
-                className="inline-flex items-center gap-2 px-6 py-3.5 text-xs font-semibold tracking-wider uppercase bg-stone-900 hover:bg-stone-800 dark:bg-[#F5F2EB] dark:hover:bg-white text-white dark:text-stone-900 rounded-xl transition-all shadow-sm cursor-pointer"
-              >
-                <span>View Real Projects</span>
-                <ArrowDownRight className="w-4 h-4" />
-              </button>
+              {/* View Real Projects with crisp rotating border only (orange, green, white) */}
+              <div className="relative inline-flex rounded-xl p-[2px] overflow-hidden group shadow-sm">
+                <div
+                  aria-hidden="true"
+                  className="absolute -inset-[150%] animate-rotating-border border-conic-colors pointer-events-none"
+                />
+                <button
+                  onClick={onExploreGallery}
+                  className="relative z-10 inline-flex items-center gap-2 px-6 py-3 text-xs font-semibold tracking-wider uppercase bg-stone-900 hover:bg-stone-800 dark:bg-[#161513] dark:hover:bg-[#201e1a] text-white rounded-[10px] transition-colors cursor-pointer"
+                >
+                  <span>View Real Projects</span>
+                  <ArrowDownRight className="w-4 h-4 text-amber-400" />
+                </button>
+              </div>
 
               <button
                 onClick={onOpenCalculator}

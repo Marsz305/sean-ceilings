@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldCheck, ArrowUpRight, Phone, Mail, MapPin, MessageSquare } from 'lucide-react';
+import { ShieldCheck, ArrowUpRight, Phone, Mail, MapPin, MessageSquare, Facebook, Instagram } from 'lucide-react';
 
 export const Footer: React.FC = () => {
   const scrollToTop = () => {
@@ -23,9 +23,41 @@ export const Footer: React.FC = () => {
               Specialist contractors for <strong className="text-stone-900 dark:text-stone-200">ceiling installation and designing, deck dropping, wall skimming and painting</strong> across Harare and Zimbabwe nationwide.
             </p>
 
-            <div className="pt-2 flex items-center gap-2.5 text-xs font-mono text-stone-600 dark:text-stone-400">
+            <div className="pt-1 flex items-center gap-2.5 text-xs font-mono text-stone-600 dark:text-stone-400">
               <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
               <span>Standards Association of Zimbabwe (SAZ) &middot; ASTM C840 Level 5</span>
+            </div>
+
+            {/* Social Channels with Orange Colors */}
+            <div className="pt-2">
+              <div className="text-[11px] font-mono uppercase text-orange-600 dark:text-orange-400 font-semibold mb-2.5 tracking-wider">
+                Follow Sean Ceilings
+              </div>
+              <div className="flex flex-wrap items-center gap-2.5">
+                <a
+                  href="https://facebook.com/seanceilings"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-orange-500/10 hover:bg-orange-500 border border-orange-500/30 text-orange-600 dark:text-orange-400 hover:text-white dark:hover:text-white transition-all shadow-2xs text-xs font-semibold group cursor-pointer"
+                  title="Follow Sean Ceilings on Facebook"
+                  aria-label="Sean Ceilings Facebook"
+                >
+                  <Facebook className="w-4 h-4 text-orange-600 dark:text-orange-400 group-hover:text-white transition-colors" />
+                  <span>Facebook</span>
+                </a>
+
+                <a
+                  href="https://instagram.com/seanceilings"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-orange-500/10 hover:bg-orange-500 border border-orange-500/30 text-orange-600 dark:text-orange-400 hover:text-white dark:hover:text-white transition-all shadow-2xs text-xs font-semibold group cursor-pointer"
+                  title="Follow Sean Ceilings on Instagram"
+                  aria-label="Sean Ceilings Instagram"
+                >
+                  <Instagram className="w-4 h-4 text-orange-600 dark:text-orange-400 group-hover:text-white transition-colors" />
+                  <span>Instagram</span>
+                </a>
+              </div>
             </div>
           </div>
 
@@ -100,6 +132,29 @@ export const Footer: React.FC = () => {
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-stone-400">
           <div>
             &copy; {new Date().getFullYear()} Sean Ceilings Zimbabwe. All architectural project photography rights reserved.
+          </div>
+
+          <div className="flex items-center gap-3">
+            <a
+              href="https://facebook.com/seanceilings"
+              target="_blank"
+              rel="noreferrer"
+              className="p-1.5 rounded-lg text-orange-600 dark:text-orange-400 hover:text-orange-500 hover:bg-orange-500/10 transition-colors"
+              title="Facebook"
+              aria-label="Facebook"
+            >
+              <Facebook className="w-4 h-4" />
+            </a>
+            <a
+              href="https://instagram.com/seanceilings"
+              target="_blank"
+              rel="noreferrer"
+              className="p-1.5 rounded-lg text-orange-600 dark:text-orange-400 hover:text-orange-500 hover:bg-orange-500/10 transition-colors"
+              title="Instagram"
+              aria-label="Instagram"
+            >
+              <Instagram className="w-4 h-4" />
+            </a>
           </div>
 
           <button

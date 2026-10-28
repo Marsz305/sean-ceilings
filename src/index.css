@@ -42,3 +42,28 @@
   background-image: radial-gradient(rgba(128, 128, 128, 0.08) 1px, transparent 0);
   background-size: 24px 24px;
 }
+
+/* Crisp rotating border animation for buttons */
+@keyframes spin-border {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-rotating-border {
+  animation: spin-border 3.5s linear infinite;
+}
+
+.border-conic-colors {
+  background: conic-gradient(
+    from 0deg,
+    #f97316 0%,
+    #22c55e 33%,
+    #ffffff 66%,
+    #f97316 100%
+  );
+}
+
