@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Sun, Moon, ChevronDown, ArrowUpRight, Menu, X, ShieldCheck, Sparkles, Calculator, Layers, Phone, Paintbrush, Hammer } from 'lucide-react';
+import { Sun, Moon, ChevronDown, ArrowUpRight, Menu, X, ShieldCheck, Sparkles, Calculator, Layers, Phone, Paintbrush, Hammer, Mail } from 'lucide-react';
 import { PROJECTS } from '../data/portfolioData';
 
 interface HeaderProps {
@@ -106,10 +106,28 @@ export const Header: React.FC<HeaderProps> = ({
           >
             Reviews
           </a>
+
+          {/* Contact & Quotations */}
+          <a
+            href="#calculator"
+            onClick={(e) => { e.preventDefault(); handleNavClick('#calculator'); }}
+            className="py-2 hover:text-amber-700 dark:hover:text-amber-400 transition-colors whitespace-nowrap shrink-0"
+          >
+            Contact &amp; Quotes
+          </a>
         </nav>
 
         {/* Zone 3: Actions */}
         <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
+          <a
+            href="mailto:seanceillings@gmail.com"
+            className="hidden 2xl:flex items-center gap-1.5 text-xs font-mono font-medium text-stone-700 dark:text-stone-300 hover:text-amber-600 dark:hover:text-amber-400 py-1.5 px-2.5 rounded-xl border border-[#E7DFD5] dark:border-[#332E29]"
+            title="Email Sean Ceilings (seanceillings@gmail.com)"
+          >
+            <Mail className="w-3.5 h-3.5 text-amber-600" />
+            <span className="whitespace-nowrap">seanceillings@gmail.com</span>
+          </a>
+
           <a
             href="tel:+263777063455"
             className="hidden xl:flex items-center gap-1.5 text-xs font-mono font-medium text-stone-700 dark:text-stone-300 hover:text-amber-600 dark:hover:text-amber-400 py-1.5 px-2.5 rounded-xl border border-[#E7DFD5] dark:border-[#332E29]"
@@ -373,6 +391,13 @@ export const Header: React.FC<HeaderProps> = ({
               className="py-2 text-amber-700 dark:text-amber-400 font-bold"
             >
               Instant USD Quotation Calculator
+            </a>
+            <a
+              href="mailto:seanceillings@gmail.com"
+              className="py-2 flex items-center gap-2 text-stone-700 dark:text-stone-300 hover:text-amber-600 font-mono text-xs"
+            >
+              <Mail className="w-4 h-4 text-amber-600" />
+              <span>seanceillings@gmail.com</span>
             </a>
             <a
               href="tel:+263777063455"

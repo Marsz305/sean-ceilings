@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowDownRight, Sparkles, ShieldCheck, CheckCircle2, MapPin, Hammer, Layers, Paintbrush, Award } from 'lucide-react';
+import { ArrowDownRight, Sparkles, ShieldCheck, CheckCircle2, MapPin, Hammer, Layers, Paintbrush, Award, Mail } from 'lucide-react';
 
 interface HeroProps {
   onExploreGallery: () => void;
@@ -97,6 +97,15 @@ export const Hero: React.FC<HeroProps> = ({ onExploreGallery, onOpenCalculator }
                 className="inline-flex items-center gap-2 px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 hover:text-emerald-600 transition-colors"
               >
                 <span>WhatsApp: +263 77 706 3455</span>
+              </a>
+
+              <a
+                href="mailto:seanceillings@gmail.com"
+                className="inline-flex items-center gap-1.5 px-3 py-3.5 text-xs font-mono text-stone-600 dark:text-stone-300 hover:text-amber-600 dark:hover:text-amber-400 transition-colors"
+                title="Email Sean Ceilings"
+              >
+                <Mail className="w-3.5 h-3.5 text-amber-600" />
+                <span>seanceillings@gmail.com</span>
               </a>
             </div>
           </div>

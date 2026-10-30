@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Project } from '../types';
-import { X, Camera, CheckCircle2, ArrowRight } from 'lucide-react';
+import { X, Camera, CheckCircle2, ArrowRight, Mail } from 'lucide-react';
 
 interface ProjectDetailModalProps {
   project: Project | null;
@@ -164,6 +164,14 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
                   className="w-full py-3 px-4 rounded-xl text-xs font-bold uppercase tracking-wider bg-emerald-600 hover:bg-emerald-500 text-white transition-colors flex items-center justify-center gap-2 shadow-xs"
                 >
                   <span>Chat on WhatsApp (+263 77 706 3455)</span>
+                </a>
+
+                <a
+                  href={`mailto:seanceillings@gmail.com?subject=${encodeURIComponent(`Quotation Inquiry: ${project.title} (${project.location})`)}&body=${encodeURIComponent(`Hello Sean Ceilings,\n\nI am interested in a quotation for a ceiling and finish like ${project.title} located in ${project.location}.\n\nCategory: ${project.categoryLabel}\nArea: ${project.areaM2}m²\n\nPlease let me know your availability and recommendations.\n\nThank you!`)}`}
+                  className="w-full py-2.5 px-4 rounded-xl text-xs font-mono text-stone-600 dark:text-stone-300 hover:text-amber-600 dark:hover:text-amber-400 border border-[#E7DFD5] dark:border-[#2E2A25] transition-colors flex items-center justify-center gap-2"
+                >
+                  <Mail className="w-3.5 h-3.5 text-amber-600" />
+                  <span>Email: seanceillings@gmail.com</span>
                 </a>
               </div>
             </div>
