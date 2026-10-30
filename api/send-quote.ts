@@ -1,7 +1,9 @@
 import type { IncomingMessage, ServerResponse } from 'http';
 import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 
 const SEAN_EMAIL = 'seanceillings@gmail.com';
+const SENDER_EMAIL = 'carlmax1705@gmail.com';
 
 interface QuotationPayload {
   fullName: string;
@@ -256,22 +258,33 @@ export default async function handler(req: any, res: any) {
     // 1. Try Resend if RESEND_API_KEY is available (Standard on Vercel)
     if (process.env.RESEND_API_KEY) {
       try {
-        const resendRes = await fetch('https://api.resend.com/emails', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
-          },
-          body: JSON.stringify({
-            from: process.env.RESEND_FROM || 'Sean Ceilings <quotes@seanceilings.co.zw>',
+        const resend = new Resend(process.env.RESEND_API_KEY);
+        const primaryFrom = process.env.RESEND_FROM || 'Sean Ceilings <onboarding@resend.dev>';
+        const replyToEmails = data.email ? [data.email, SENDER_EMAIL] : [SENDER_EMAIL];
+
+        let { error: resendError } = await resend.emails.send({
+          from: primaryFrom,
+          to: [SEAN_EMAIL],
+          replyTo: replyToEmails,
+          subject: subject,
+          text: textContent,
+          html: htmlContent,
+        });
+
+        if (resendError && primaryFrom !== 'Sean Ceilings <onboarding@resend.dev>') {
+          const fallback = await resend.emails.send({
+            from: 'Sean Ceilings <onboarding@resend.dev>',
             to: [SEAN_EMAIL],
-            reply_to: data.email || undefined,
+            replyTo: replyToEmails,
             subject: subject,
             text: textContent,
             html: htmlContent,
-          }),
-        });
-        if (resendRes.ok) {
+          });
+          if (!fallback.error) {
+            sent = true;
+            providerUsed = 'resend';
+          }
+        } else if (!resendError) {
           sent = true;
           providerUsed = 'resend';
         }

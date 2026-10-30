@@ -252,15 +252,48 @@ export const QuotationCalculator: React.FC = () => {
       quotationRef: randomRef,
     };
 
+    const emailPayload = {
+      name: payload.fullName,
+      fullName: payload.fullName,
+      email: payload.email,
+      phone: payload.phone,
+      subject: `Sean Ceilings Quotation [${randomRef}] - ${payload.fullName} ($${payload.totalCostUSD.toLocaleString()} USD)`,
+      message: generateQuotationEmailBody(randomRef),
+      notes: payload.notes,
+      projectSuburb: payload.projectSuburb,
+      timeline: payload.timeline,
+      areaM2: payload.areaM2,
+      ratePerM2: payload.ratePerM2,
+      totalCostUSD: payload.totalCostUSD,
+      quotationRef: randomRef,
+      selectedServices: payload.selectedServices,
+      includeShadowline: payload.includeShadowline,
+      shadowlineMeters: payload.shadowlineMeters,
+      shadowlineCost: payload.shadowlineCost,
+      substrate: payload.substrate,
+      finishLevel: payload.finishLevel,
+    };
+
     try {
-      // 1. Send quotation to serverless API (/api/send-quote)
+      // 1. Send via Resend Vercel serverless function (/api/send)
+      await fetch('/api/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(emailPayload),
+      });
+    } catch (err) {
+      console.warn('Vercel Resend /api/send attempt:', err);
+    }
+
+    try {
+      // 2. Secondary fallback via /api/send-quote
       await fetch('/api/send-quote', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
     } catch (err) {
-      console.warn('Serverless API dispatch attempt:', err);
+      console.warn('Serverless /api/send-quote attempt:', err);
     }
 
     try {
