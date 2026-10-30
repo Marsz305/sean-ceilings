@@ -5,19 +5,76 @@ import {
   CheckCircle2, 
   Clock, 
   Package, 
-  MessageSquare
+  MessageSquare,
+  Layers,
+  Hammer,
+  Sparkles,
+  Paintbrush,
+  Check,
+  ArrowRight,
+  ShieldCheck
 } from 'lucide-react';
+
+interface ServiceOption {
+  id: 'deck-dropping' | 'roof-traces' | 'painting' | 'wall-skimming';
+  name: string;
+  ratePerM2: number;
+  tagline: string;
+  icon: React.ElementType;
+  description: string;
+}
+
+const SERVICES: ServiceOption[] = [
+  {
+    id: 'deck-dropping',
+    name: 'Deck Dropping',
+    ratePerM2: 8,
+    tagline: 'Concrete deck drops & bulkheads',
+    icon: Layers,
+    description: 'Suspended drop ceilings beneath concrete slabs, stepped bulkheads & ambient LED light troughs.',
+  },
+  {
+    id: 'roof-traces',
+    name: 'Roof Traces',
+    ratePerM2: 5,
+    tagline: 'Trusses brandering & framework',
+    icon: Hammer,
+    description: 'Timber trusses / brandering framing, laser-leveled grid hanging & RhinoBoard drywall installation.',
+  },
+  {
+    id: 'wall-skimming',
+    name: 'Wall Skimming',
+    ratePerM2: 4,
+    tagline: 'Level 5 Gyproc RhinoSet',
+    icon: Sparkles,
+    description: 'Monolithic skim plastering over drywall & plastered walls for zero joint flashing under raking sunlight.',
+  },
+  {
+    id: 'painting',
+    name: 'Painting',
+    ratePerM2: 5,
+    tagline: 'Primer & washable emulsion',
+    icon: Paintbrush,
+    description: 'Full architectural painting: plaster primer mist coat, premium acrylic emulsion & sharp cut lines.',
+  },
+];
 
 export const QuotationCalculator: React.FC = () => {
   const [unit, setUnit] = useState<'m2' | 'sqft'>('m2');
-  const [areaM2, setAreaM2] = useState<number>(140);
+  const [areaM2, setAreaM2] = useState<number>(120);
 
-  // Configuration options in Zimbabwe context
-  const [projectType, setProjectType] = useState<'ceiling' | 'walls-ceiling' | 'commercial' | 'curved'>('walls-ceiling');
-  const [substrate, setSubstrate] = useState<'rhinoboard' | 'brickwork' | 'textured' | 'concrete'>('rhinoboard');
-  const [finishLevel, setFinishLevel] = useState<'level4' | 'level5' | 'cretestone'>('level5');
+  // Selected services (users can choose any combination of the 4 verified rates)
+  const [selectedServices, setSelectedServices] = useState<Record<string, boolean>>({
+    'deck-dropping': true,
+    'roof-traces': false,
+    'wall-skimming': true,
+    'painting': true,
+  });
+
+  const [substrate, setSubstrate] = useState<'rhinoboard' | 'plastered-wall' | 'textured' | 'concrete'>('rhinoboard');
+  const [finishLevel, setFinishLevel] = useState<'level5' | 'level4' | 'cretestone'>('level5');
   const [includeShadowline, setIncludeShadowline] = useState<boolean>(true);
-  const [shadowlineMeters, setShadowlineMeters] = useState<number>(45);
+  const [shadowlineMeters, setShadowlineMeters] = useState<number>(40);
 
   // Contact Form state (Zimbabwean phone / WhatsApp)
   const [fullName, setFullName] = useState('');
@@ -29,29 +86,62 @@ export const QuotationCalculator: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submittedRef, setSubmittedRef] = useState<string | null>(null);
 
-  // Pricing formula in USD ($)
-  const baseRatePerM2USD = 
-    finishLevel === 'level5' ? 20 :
-    finishLevel === 'cretestone' ? 22 : 14;
+  // Toggle service selection (ensure at least one service is selected)
+  const toggleService = (id: string) => {
+    setSelectedServices((prev) => {
+      const activeCount = Object.values(prev).filter(Boolean).length;
+      if (prev[id] && activeCount <= 1) {
+        return prev; // keep at least one
+      }
+      return {
+        ...prev,
+        [id]: !prev[id],
+      };
+    });
+  };
 
-  const substrateMultiplier = 
-    substrate === 'rhinoboard' ? 1.0 :
-    substrate === 'brickwork' ? 1.25 :
-    substrate === 'textured' ? 1.45 : 1.30;
+  const applyPreset = (preset: 'all' | 'deck-package' | 'roof-package' | 'skim-paint') => {
+    if (preset === 'all') {
+      setSelectedServices({
+        'deck-dropping': true,
+        'roof-traces': true,
+        'wall-skimming': true,
+        'painting': true,
+      });
+    } else if (preset === 'deck-package') {
+      setSelectedServices({
+        'deck-dropping': true,
+        'roof-traces': false,
+        'wall-skimming': true,
+        'painting': true,
+      });
+    } else if (preset === 'roof-package') {
+      setSelectedServices({
+        'deck-dropping': false,
+        'roof-traces': true,
+        'wall-skimming': true,
+        'painting': true,
+      });
+    } else if (preset === 'skim-paint') {
+      setSelectedServices({
+        'deck-dropping': false,
+        'roof-traces': false,
+        'wall-skimming': true,
+        'painting': true,
+      });
+    }
+  };
 
-  const projectMultiplier = 
-    projectType === 'ceiling' ? 1.2 :
-    projectType === 'curved' ? 1.5 : 1.05;
+  // Calculate pricing based on exact rates
+  const selectedServiceList = SERVICES.filter((s) => selectedServices[s.id]);
+  const ratePerM2 = selectedServiceList.reduce((sum, s) => sum + s.ratePerM2, 0);
 
-  const calculatedBase = areaM2 * baseRatePerM2USD * substrateMultiplier * projectMultiplier;
+  const baseServiceCost = areaM2 * ratePerM2;
   const shadowlineCost = includeShadowline ? shadowlineMeters * 6 : 0;
-  
-  const estimatedMin = Math.round((calculatedBase + shadowlineCost) * 0.95);
-  const estimatedMax = Math.round((calculatedBase + shadowlineCost) * 1.10);
+  const totalCostUSD = baseServiceCost + shadowlineCost;
 
-  const estimatedBags = Math.ceil(areaM2 * (finishLevel === 'level5' ? 0.32 : 0.22));
-  const estimatedDays = Math.max(2, Math.ceil(areaM2 / 40) + (includeShadowline ? 1 : 0));
-
+  const estimatedBags = Math.ceil(areaM2 * (selectedServices['wall-skimming'] ? 0.28 : 0.12));
+  const estimatedDays = Math.max(2, Math.ceil(areaM2 / 35) + (selectedServices['deck-dropping'] ? 1 : 0) + (includeShadowline ? 1 : 0));
   const displayArea = unit === 'm2' ? areaM2 : Math.round(areaM2 * 10.7639);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -64,20 +154,92 @@ export const QuotationCalculator: React.FC = () => {
     }, 600);
   };
 
+  const servicesSummaryText = selectedServiceList
+    .map((s) => `${s.name} ($${s.ratePerM2}/m²)`)
+    .join(' + ');
+
+  const whatsappMessage = encodeURIComponent(
+    `Hello Sean Ceilings! I calculated a quotation on your website for ${areaM2}m² in ${projectSuburb}:\n` +
+    `• Services: ${servicesSummaryText}\n` +
+    `• Rate: $${ratePerM2}/m²\n` +
+    `${includeShadowline ? `• Shadowline Reglets: ${shadowlineMeters}m ($${shadowlineCost})\n` : ''}` +
+    `• Estimated Total: $${totalCostUSD.toLocaleString()} USD\n` +
+    `Name: ${fullName || 'Client'}\n` +
+    `Timeline: ${timeline}`
+  );
+
   return (
     <section id="calculator" className="py-24 border-b border-[#E7DFD5] dark:border-[#262420] bg-[#FAF8F5] dark:bg-[#121110] transition-colors">
       <div className="max-w-7xl mx-auto px-6">
         {/* Header */}
-        <div className="max-w-2xl mb-12">
-          <div className="text-xs font-mono tracking-widest text-amber-700 dark:text-amber-400 uppercase mb-2 font-semibold">
-            Sean Ceilings Estimations &middot; USD Rates
+        <div className="max-w-3xl mb-10">
+          <div className="inline-flex items-center gap-2 text-xs font-mono tracking-widest text-amber-700 dark:text-amber-400 uppercase mb-2 font-semibold">
+            <Calculator className="w-3.5 h-3.5" />
+            <span>Official Transparent Rates &middot; Harare &amp; Zimbabwe</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-bold font-display text-stone-900 dark:text-[#F5F2EB]">
-            Get a Detailed Ceiling Quotation in USD
+            Instant USD Quotation Calculator
           </h2>
-          <p className="text-sm text-stone-600 dark:text-stone-400 mt-2">
-            Calculate estimated material requirements and pricing for Sean Ceilings drywall framing, multi-tier bulkheads, Gyproc RhinoBoard, or plastered brickwork anywhere in Harare or nationwide.
+          <p className="text-sm text-stone-600 dark:text-stone-400 mt-2 leading-relaxed">
+            Transparent pricing based on Sean Ceilings official standard rates: <strong>deck dropping at $8/m²</strong>, <strong>roof traces at $5/m²</strong>, <strong>painting at $5/m²</strong>, and <strong>wall skimming at $4/m²</strong>. Select your project requirements below for an exact estimate.
           </p>
+        </div>
+
+        {/* ================= OFFICIAL RATE CARD BANNER ================= */}
+        <div className="mb-12 p-6 rounded-3xl bg-white dark:bg-[#1A1815] border border-[#E7DFD5] dark:border-[#2E2A25] shadow-xs">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-[#E7DFD5] dark:border-[#2E2A25] gap-2 mb-6">
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+              <span className="text-xs font-mono font-bold uppercase tracking-wider text-stone-900 dark:text-[#F5F2EB]">
+                Sean Ceilings Verified Rate Card
+              </span>
+            </div>
+            <span className="text-[11px] font-mono text-stone-500 dark:text-stone-400">
+              Direct USD / Square Meter &middot; No Hidden Fees
+            </span>
+          </div>
+
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            {SERVICES.map((srv) => {
+              const Icon = srv.icon;
+              const isSelected = selectedServices[srv.id];
+              return (
+                <div
+                  key={srv.id}
+                  onClick={() => toggleService(srv.id)}
+                  className={`relative p-4 rounded-2xl border transition-all cursor-pointer select-none ${
+                    isSelected
+                      ? 'border-amber-600 bg-amber-500/10 dark:bg-amber-500/15 ring-1 ring-amber-600/50'
+                      : 'border-[#E7DFD5] dark:border-[#2A2622] bg-[#FAF8F5] dark:bg-[#151413] hover:border-amber-500/40'
+                  }`}
+                >
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="w-8 h-8 rounded-xl bg-amber-600/15 dark:bg-amber-600/25 flex items-center justify-center text-amber-700 dark:text-amber-400">
+                      <Icon className="w-4 h-4" />
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-base sm:text-lg font-bold font-mono text-stone-900 dark:text-[#F5F2EB]">
+                        ${srv.ratePerM2}
+                      </span>
+                      <span className="text-[11px] font-mono text-stone-500 dark:text-stone-400">/ m²</span>
+                    </div>
+                  </div>
+
+                  <div className="text-xs font-bold text-stone-900 dark:text-[#F5F2EB] flex items-center justify-between">
+                    <span>{srv.name}</span>
+                    {isSelected && (
+                      <span className="w-4 h-4 rounded-full bg-amber-600 text-white flex items-center justify-center text-[10px]">
+                        <Check className="w-2.5 h-2.5 stroke-[3]" />
+                      </span>
+                    )}
+                  </div>
+                  <div className="text-[11px] text-stone-500 dark:text-stone-400 mt-1 line-clamp-2 leading-snug">
+                    {srv.tagline}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
 
         {submittedRef ? (
@@ -92,34 +254,40 @@ export const QuotationCalculator: React.FC = () => {
             </h3>
 
             <p className="text-sm text-stone-600 dark:text-stone-400 mb-6">
-              Thank you, <strong className="text-stone-900 dark:text-white">{fullName}</strong>. Sean Ceilings will review your project in <span className="text-amber-700 dark:text-amber-400 font-semibold">{projectSuburb}</span> and contact you via Phone or WhatsApp at <span className="font-semibold">+263 77 706 3455</span> shortly.
+              Thank you, <strong className="text-stone-900 dark:text-white">{fullName}</strong>. Sean Ceilings will review your scope for <span className="text-amber-700 dark:text-amber-400 font-semibold">{projectSuburb}</span> and contact you shortly at <span className="font-semibold">+263 77 706 3455</span>.
             </p>
 
-            <div className="p-4 rounded-2xl bg-[#FAF8F5] dark:bg-[#151413] border border-[#E7DFD5] dark:border-[#2A2622] text-left text-xs font-mono space-y-2 mb-6">
+            <div className="p-5 rounded-2xl bg-[#FAF8F5] dark:bg-[#151413] border border-[#E7DFD5] dark:border-[#2A2622] text-left text-xs font-mono space-y-2.5 mb-6">
               <div className="flex justify-between text-stone-500">
-                <span>Scope:</span>
-                <span className="text-stone-900 dark:text-white font-medium">{projectType} &middot; {areaM2}m²</span>
+                <span>Selected Services:</span>
+                <span className="text-stone-900 dark:text-white font-medium text-right max-w-xs">{servicesSummaryText}</span>
               </div>
               <div className="flex justify-between text-stone-500">
-                <span>Ceiling Spec:</span>
-                <span className="text-stone-900 dark:text-white font-medium">{finishLevel.toUpperCase()}</span>
+                <span>Total Scope Area:</span>
+                <span className="text-stone-900 dark:text-white font-medium">{areaM2} m² (~{Math.round(areaM2 * 10.7639)} sq ft)</span>
               </div>
               <div className="flex justify-between text-stone-500">
-                <span>Estimated USD Budget:</span>
-                <span className="text-amber-700 dark:text-amber-400 font-bold text-sm">${estimatedMin.toLocaleString()} &ndash; ${estimatedMax.toLocaleString()} USD</span>
+                <span>Combined Unit Rate:</span>
+                <span className="text-amber-700 dark:text-amber-400 font-bold">${ratePerM2} / m² USD</span>
               </div>
-              <div className="flex justify-between text-stone-500">
-                <span>Material Est:</span>
-                <span className="text-stone-900 dark:text-white">~{estimatedBags} bags of 25kg Gyproc RhinoSet</span>
+              {includeShadowline && (
+                <div className="flex justify-between text-stone-500">
+                  <span>Shadowline Reglets:</span>
+                  <span className="text-stone-900 dark:text-white">{shadowlineMeters}m (${shadowlineCost} USD)</span>
+                </div>
+              )}
+              <div className="pt-2 border-t border-[#E7DFD5] dark:border-[#2A2622] flex justify-between items-center text-stone-900 dark:text-white">
+                <span className="font-bold">Calculated USD Total:</span>
+                <span className="text-amber-600 dark:text-amber-400 font-bold text-base">${totalCostUSD.toLocaleString()} USD</span>
               </div>
             </div>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
               <a
-                href={`https://wa.me/263777063455?text=Hi%20Sean%20Ceilings%2C%20my%20quotation%20reference%20is%20${submittedRef}%20for%20${areaM2}m2%20in%20${encodeURIComponent(projectSuburb)}`}
+                href={`https://wa.me/263777063455?text=${whatsappMessage}`}
                 target="_blank"
                 rel="noreferrer"
-                className="w-full sm:w-auto px-5 py-2.5 text-xs font-bold uppercase tracking-wider bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl flex items-center justify-center gap-2"
+                className="w-full sm:w-auto px-5 py-3 text-xs font-bold uppercase tracking-wider bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl flex items-center justify-center gap-2 shadow-sm transition-colors"
               >
                 <MessageSquare className="w-3.5 h-3.5" />
                 <span>Chat Instantly on WhatsApp (+263 77 706 3455)</span>
@@ -127,9 +295,9 @@ export const QuotationCalculator: React.FC = () => {
 
               <button
                 onClick={() => setSubmittedRef(null)}
-                className="w-full sm:w-auto px-5 py-2.5 text-xs font-semibold uppercase tracking-wider bg-stone-900 dark:bg-white text-white dark:text-stone-900 rounded-xl hover:opacity-90 cursor-pointer"
+                className="w-full sm:w-auto px-5 py-3 text-xs font-semibold uppercase tracking-wider bg-stone-900 dark:bg-white text-white dark:text-stone-900 rounded-xl hover:opacity-90 cursor-pointer transition-colors"
               >
-                Calculate Another
+                Calculate Another Project
               </button>
             </div>
           </div>
@@ -137,60 +305,82 @@ export const QuotationCalculator: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
             {/* Left 7 Columns: Estimator Controls */}
             <div className="lg:col-span-7 space-y-8">
-              {/* 1. Project Type */}
+              {/* 1. Select Services (with individual toggle + presets) */}
               <div>
-                <label className="block text-xs font-mono uppercase text-amber-700 dark:text-amber-400 font-semibold mb-3">
-                  1. Project Type
-                </label>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                  <button
-                    type="button"
-                    onClick={() => setProjectType('ceiling')}
-                    className={`p-3 text-left rounded-2xl border text-xs font-medium transition-all cursor-pointer ${
-                      projectType === 'ceiling'
-                        ? 'border-amber-600 bg-amber-600 text-white shadow-xs'
-                        : 'border-[#E7DFD5] dark:border-[#2E2A25] bg-white dark:bg-[#1C1A17] text-stone-700 dark:text-stone-300'
-                    }`}
-                  >
-                    <div className="font-bold">Ceiling Install</div>
-                    <div className="text-[10px] opacity-80 mt-0.5">&amp; Designing</div>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setProjectType('curved')}
-                    className={`p-3 text-left rounded-2xl border text-xs font-medium transition-all cursor-pointer ${
-                      projectType === 'curved'
-                        ? 'border-amber-600 bg-amber-600 text-white shadow-xs'
-                        : 'border-[#E7DFD5] dark:border-[#2E2A25] bg-white dark:bg-[#1C1A17] text-stone-700 dark:text-stone-300'
-                    }`}
-                  >
-                    <div className="font-bold">Deck Dropping</div>
-                    <div className="text-[10px] opacity-80 mt-0.5">&amp; Bulkheads</div>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setProjectType('commercial')}
-                    className={`p-3 text-left rounded-2xl border text-xs font-medium transition-all cursor-pointer ${
-                      projectType === 'commercial'
-                        ? 'border-amber-600 bg-amber-600 text-white shadow-xs'
-                        : 'border-[#E7DFD5] dark:border-[#2E2A25] bg-white dark:bg-[#1C1A17] text-stone-700 dark:text-stone-300'
-                    }`}
-                  >
-                    <div className="font-bold">Wall Skimming</div>
-                    <div className="text-[10px] opacity-80 mt-0.5">&amp; RhinoSet</div>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setProjectType('walls-ceiling')}
-                    className={`p-3 text-left rounded-2xl border text-xs font-medium transition-all cursor-pointer ${
-                      projectType === 'walls-ceiling'
-                        ? 'border-amber-600 bg-amber-600 text-white shadow-xs'
-                        : 'border-[#E7DFD5] dark:border-[#2E2A25] bg-white dark:bg-[#1C1A17] text-stone-700 dark:text-stone-300'
-                    }`}
-                  >
-                    <div className="font-bold">Full Package</div>
-                    <div className="text-[10px] opacity-80 mt-0.5">Ceilings, Skim &amp; Paint</div>
-                  </button>
+                <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+                  <label className="text-xs font-mono uppercase text-amber-700 dark:text-amber-400 font-semibold">
+                    1. Select Services Needed
+                  </label>
+                  <div className="flex flex-wrap items-center gap-1.5 text-[11px] font-mono">
+                    <span className="text-stone-400 mr-1">Presets:</span>
+                    <button
+                      type="button"
+                      onClick={() => applyPreset('deck-package')}
+                      className="px-2 py-0.5 rounded-md bg-stone-200 dark:bg-stone-800 hover:bg-amber-600 hover:text-white transition-colors cursor-pointer text-stone-700 dark:text-stone-300"
+                    >
+                      Deck Drop + Skim + Paint ($17/m²)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => applyPreset('roof-package')}
+                      className="px-2 py-0.5 rounded-md bg-stone-200 dark:bg-stone-800 hover:bg-amber-600 hover:text-white transition-colors cursor-pointer text-stone-700 dark:text-stone-300"
+                    >
+                      Roof Traces + Skim + Paint ($14/m²)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => applyPreset('skim-paint')}
+                      className="px-2 py-0.5 rounded-md bg-stone-200 dark:bg-stone-800 hover:bg-amber-600 hover:text-white transition-colors cursor-pointer text-stone-700 dark:text-stone-300"
+                    >
+                      Skim &amp; Paint ($9/m²)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => applyPreset('all')}
+                      className="px-2 py-0.5 rounded-md bg-stone-200 dark:bg-stone-800 hover:bg-amber-600 hover:text-white transition-colors cursor-pointer text-stone-700 dark:text-stone-300"
+                    >
+                      All ($22/m²)
+                    </button>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {SERVICES.map((srv) => {
+                    const Icon = srv.icon;
+                    const isChecked = selectedServices[srv.id];
+                    return (
+                      <button
+                        key={srv.id}
+                        type="button"
+                        onClick={() => toggleService(srv.id)}
+                        className={`p-4 text-left rounded-2xl border transition-all cursor-pointer flex items-start gap-3.5 ${
+                          isChecked
+                            ? 'border-amber-600 bg-white dark:bg-[#1C1A17] ring-1 ring-amber-600/40 shadow-xs'
+                            : 'border-[#E7DFD5] dark:border-[#2E2A25] bg-stone-50 dark:bg-[#151413] opacity-75'
+                        }`}
+                      >
+                        <div className={`mt-0.5 w-5 h-5 rounded-md flex items-center justify-center shrink-0 border transition-colors ${
+                          isChecked ? 'bg-amber-600 border-amber-600 text-white' : 'border-stone-400 dark:border-stone-600'
+                        }`}>
+                          {isChecked && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                        </div>
+
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between">
+                            <span className="font-bold text-xs text-stone-900 dark:text-[#F5F2EB]">
+                              {srv.name}
+                            </span>
+                            <span className="font-mono font-bold text-xs text-amber-700 dark:text-amber-400">
+                              ${srv.ratePerM2}/m²
+                            </span>
+                          </div>
+                          <p className="text-[11px] text-stone-500 dark:text-stone-400 mt-1 leading-snug">
+                            {srv.description}
+                          </p>
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -229,8 +419,8 @@ export const QuotationCalculator: React.FC = () => {
 
                 <input
                   type="range"
-                  min="25"
-                  max="650"
+                  min="20"
+                  max="600"
                   step="5"
                   value={areaM2}
                   onChange={(e) => setAreaM2(Number(e.target.value))}
@@ -238,9 +428,9 @@ export const QuotationCalculator: React.FC = () => {
                 />
 
                 <div className="flex justify-between text-[10px] font-mono text-stone-400 mt-2">
-                  <span>25 m² (Room)</span>
-                  <span>180 m² (Suburban Home)</span>
-                  <span>650+ m² (Luxury Estate)</span>
+                  <span>20 m² (Single Room)</span>
+                  <span>120 m² (Standard Home)</span>
+                  <span>600+ m² (Luxury Villa)</span>
                 </div>
               </div>
 
@@ -265,14 +455,14 @@ export const QuotationCalculator: React.FC = () => {
 
                   <button
                     type="button"
-                    onClick={() => setSubstrate('brickwork')}
+                    onClick={() => setSubstrate('plastered-wall')}
                     className={`p-3.5 text-left rounded-2xl border text-xs transition-all cursor-pointer ${
-                      substrate === 'brickwork'
+                      substrate === 'plastered-wall'
                         ? 'border-amber-600 bg-amber-600 text-white shadow-xs'
                         : 'border-[#E7DFD5] dark:border-[#2E2A25] bg-white dark:bg-[#1C1A17] text-stone-700 dark:text-stone-300'
                     }`}
                   >
-                    <div className="font-bold">Plastered Brick</div>
+                    <div className="font-bold">Plastered Wall</div>
                     <div className="text-[10px] opacity-80 mt-0.5">Cement Sand Base</div>
                   </button>
 
@@ -354,7 +544,7 @@ export const QuotationCalculator: React.FC = () => {
                   >
                     <div className="font-bold text-xs">Cretestone High-Bond</div>
                     <div className="text-[11px] opacity-85 mt-1 leading-snug">
-                      Specialized adhesion for concrete soffits and plastered brickwork.
+                      Specialized adhesion for concrete soffits and plastered walls.
                     </div>
                   </button>
                 </div>
@@ -364,7 +554,7 @@ export const QuotationCalculator: React.FC = () => {
               <div className="flex items-center justify-between p-4 rounded-2xl border border-[#E7DFD5] dark:border-[#2E2A25] bg-white dark:bg-[#1C1A17]">
                 <div>
                   <div className="text-xs font-bold text-stone-900 dark:text-[#F5F2EB]">
-                    Include 15mm Shadowline Perimeter Reglets
+                    Include 15mm Shadowline Perimeter Reglets ($6/m)
                   </div>
                   <div className="text-[11px] text-stone-500 dark:text-stone-400 mt-0.5">
                     Replaces timber cornices with modern negative ceiling reveals
@@ -397,20 +587,39 @@ export const QuotationCalculator: React.FC = () => {
             </div>
 
             {/* Right 5 Columns: Summary & Submission Form */}
-            <div className="lg:col-span-5 flex flex-col justify-between">
+            <div className="lg:col-span-5 flex flex-col justify-between space-y-6">
               {/* Cost & Materials Card in USD */}
-              <div className="p-6 rounded-3xl bg-stone-900 text-white border border-stone-800 shadow-xl mb-6">
+              <div className="p-6 rounded-3xl bg-stone-900 text-white border border-stone-800 shadow-xl">
                 <div className="text-[11px] font-mono text-amber-400 uppercase tracking-wider mb-2 flex items-center justify-between">
-                  <span>Estimated Project Cost (USD)</span>
-                  <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300">Sean Ceilings Rates</span>
+                  <span>Exact Quotation (USD)</span>
+                  <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-semibold font-mono">
+                    ${ratePerM2}/m² Combined
+                  </span>
                 </div>
 
                 <div className="text-3xl sm:text-4xl font-bold font-display tracking-tight text-white mb-2 tabular-nums">
-                  ${estimatedMin.toLocaleString()} &ndash; ${estimatedMax.toLocaleString()} USD
+                  ${totalCostUSD.toLocaleString()} USD
                 </div>
 
-                <div className="text-xs text-stone-400 mb-6 leading-relaxed">
-                  Calculated at approximately ${Math.round(calculatedBase / areaM2)}/m² USD inclusive of Gyproc RhinoSet plaster, bonding primer, and flawless finish.
+                <div className="text-xs text-stone-400 mb-4 leading-relaxed">
+                  Calculated for <strong className="text-white">{areaM2} m²</strong> with verified Sean Ceilings rates.
+                </div>
+
+                {/* Itemized Line Items */}
+                <div className="space-y-2 py-3 border-t border-stone-800 text-xs font-mono">
+                  {selectedServiceList.map((srv) => (
+                    <div key={srv.id} className="flex justify-between items-center text-stone-300">
+                      <span>• {srv.name} (${srv.ratePerM2}/m²):</span>
+                      <span className="font-bold text-white">${(areaM2 * srv.ratePerM2).toLocaleString()} USD</span>
+                    </div>
+                  ))}
+
+                  {includeShadowline && (
+                    <div className="flex justify-between items-center text-stone-300">
+                      <span>• Shadowline Reglets ({shadowlineMeters}m @ $6):</span>
+                      <span className="font-bold text-white">${shadowlineCost.toLocaleString()} USD</span>
+                    </div>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-2 gap-3 pt-4 border-t border-stone-800 text-xs font-mono">
@@ -423,6 +632,18 @@ export const QuotationCalculator: React.FC = () => {
                     <span>~{estimatedBags} Bags RhinoSet</span>
                   </div>
                 </div>
+
+                <div className="mt-5 pt-4 border-t border-stone-800">
+                  <a
+                    href={`https://wa.me/263777063455?text=${whatsappMessage}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="w-full py-3 px-4 rounded-xl bg-[#25D366] hover:bg-[#20ba59] text-white text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-colors shadow-sm"
+                  >
+                    <MessageSquare className="w-4 h-4" />
+                    <span>Send this Estimate on WhatsApp</span>
+                  </a>
+                </div>
               </div>
 
               {/* Inquiry & Contact Form */}
@@ -431,7 +652,7 @@ export const QuotationCalculator: React.FC = () => {
                 className="p-6 rounded-3xl border border-[#E7DFD5] dark:border-[#2E2A25] bg-white dark:bg-[#1C1A17] space-y-4 shadow-xs"
               >
                 <div className="text-xs font-mono uppercase text-amber-700 dark:text-amber-400 font-bold tracking-wider">
-                  Contact Sean Ceilings Direct
+                  Request Formal Written Quote
                 </div>
 
                 <div>
@@ -478,23 +699,40 @@ export const QuotationCalculator: React.FC = () => {
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-[11px] font-medium text-stone-700 dark:text-stone-300 mb-1">
-                    Project Suburb / City in Zimbabwe *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="e.g. Borrowdale Brooke, Highlands, or Glen Lorne"
-                    value={projectSuburb}
-                    onChange={(e) => setProjectSuburb(e.target.value)}
-                    className="w-full text-xs px-3 py-2.5 rounded-xl border border-[#E7DFD5] dark:border-[#332E29] bg-[#FAF8F5] dark:bg-[#151413] text-stone-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-amber-500"
-                  />
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-medium text-stone-700 dark:text-stone-300 mb-1">
+                      Project Location / Suburb *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. Borrowdale Brooke"
+                      value={projectSuburb}
+                      onChange={(e) => setProjectSuburb(e.target.value)}
+                      className="w-full text-xs px-3 py-2.5 rounded-xl border border-[#E7DFD5] dark:border-[#332E29] bg-[#FAF8F5] dark:bg-[#151413] text-stone-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-amber-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-medium text-stone-700 dark:text-stone-300 mb-1">
+                      Timeline
+                    </label>
+                    <select
+                      value={timeline}
+                      onChange={(e) => setTimeline(e.target.value)}
+                      className="w-full text-xs px-3 py-2.5 rounded-xl border border-[#E7DFD5] dark:border-[#332E29] bg-[#FAF8F5] dark:bg-[#151413] text-stone-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-amber-500"
+                    >
+                      <option>Immediate (Within 1 week)</option>
+                      <option>Within 2-4 weeks</option>
+                      <option>Planning stage (1-2 months)</option>
+                    </select>
+                  </div>
                 </div>
 
                 <div>
                   <label className="block text-[11px] font-medium text-stone-700 dark:text-stone-300 mb-1">
-                    Ceiling Notes (e.g. Tray design, LED coves, brickwork)
+                    Ceiling Notes (e.g. Tray design, LED coves, bulkhead details)
                   </label>
                   <textarea
                     rows={2}
@@ -513,10 +751,6 @@ export const QuotationCalculator: React.FC = () => {
                   <Send className="w-3.5 h-3.5" />
                   <span>{isSubmitting ? 'Calculating Specification...' : 'Request Quotation From Sean Ceilings'}</span>
                 </button>
-
-                <div className="text-[10px] text-center text-stone-400 font-mono">
-                  Direct WhatsApp: <a href="https://wa.me/263777063455" className="text-amber-600 hover:underline">+263 77 706 3455</a>
-                </div>
               </form>
             </div>
           </div>

@@ -8,9 +8,9 @@ export const WhatsAppWidget: React.FC = () => {
   const phoneNumber = '263777063455'; // Sean Ceilings direct line
 
   const quickQuestions = [
-    'Hi Sean Ceilings, I need a quotation for a tray ceiling in Harare.',
-    'What is your rate per m² for gypsum ceiling skimming?',
-    'Can Sean Ceilings do custom bulkheads and LED lighting?',
+    'Hi Sean, I saw your rates: $8/m² deck dropping, $5/m² roof traces, $5/m² painting, $4/m² wall skimming. Can I get a quote?',
+    'Hi Sean Ceilings, I need deck dropping ($8/m²) & skimming ($4/m²) in Harare.',
+    'Can Sean Ceilings do custom bulkheads and recessed LED lighting?',
   ];
 
   const handleSendMessage = (textToSend?: string) => {

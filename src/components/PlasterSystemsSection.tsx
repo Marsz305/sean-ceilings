@@ -42,7 +42,7 @@ export const PlasterSystemsSection: React.FC<PlasterSystemsSectionProps> = ({ on
       level: 5,
       name: 'Level 5: Monolithic Architectural Skim',
       where: 'Borrowdale luxury homes, art galleries, double-height ceilings, dark paints.',
-      treatment: 'Continuous skim coat of Gyproc RhinoSet across 100% of the board or brick plane.',
+      treatment: 'Continuous skim coat of Gyproc RhinoSet across 100% of the board or wall plane.',
       rakingPerformance: 'Zero joint flashing. Complete specular & absorption uniformity under low-angle sun.',
     },
   ];
@@ -60,7 +60,7 @@ export const PlasterSystemsSection: React.FC<PlasterSystemsSectionProps> = ({ on
             </h2>
           </div>
           <p className="text-sm text-stone-600 dark:text-stone-400 max-w-md leading-relaxed">
-            True architectural skimming eliminates suction and texture differentials between RhinoBoard paper and joints, or brick mortar and plaster.
+            True architectural skimming eliminates suction and texture differentials between RhinoBoard paper and joints, or wall joints and plaster.
           </p>
         </div>
 

@@ -155,12 +155,15 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="max-w-7xl mx-auto px-6 py-8">
             <div className="grid grid-cols-4 gap-6">
               <div className="p-5 rounded-2xl border border-[#E7DFD5] dark:border-[#2E2A25] bg-white dark:bg-[#1A1815]">
-                <div className="flex items-center gap-2 text-stone-900 dark:text-[#F5F2EB] font-bold text-sm mb-2">
-                  <Hammer className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-                  <span>Ceiling Installation &amp; Designing</span>
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2 text-stone-900 dark:text-[#F5F2EB] font-bold text-sm">
+                    <Hammer className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                    <span>Roof Traces &amp; Ceilings</span>
+                  </div>
+                  <span className="font-mono text-xs font-bold text-amber-700 dark:text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-md">$5/m²</span>
                 </div>
                 <p className="text-xs text-stone-600 dark:text-stone-400 mb-3 leading-relaxed">
-                  Bespoke architectural layout, timber and galvanised metal framework, Gyproc RhinoBoard hanging, recessed downlights, and custom chandelier structural anchors.
+                  Bespoke architectural layout, timber trusses brandering, galvanised framework, and Gyproc RhinoBoard hanging.
                 </p>
                 <div className="text-[11px] font-mono text-stone-500 dark:text-stone-400 space-y-1">
                   <div>· Laser-aligned grid leveling</div>
@@ -170,12 +173,15 @@ export const Header: React.FC<HeaderProps> = ({
               </div>
 
               <div className="p-5 rounded-2xl border border-[#E7DFD5] dark:border-[#2E2A25] bg-white dark:bg-[#1A1815]">
-                <div className="flex items-center gap-2 text-stone-900 dark:text-[#F5F2EB] font-bold text-sm mb-2">
-                  <Layers className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-                  <span>Deck Dropping &amp; Bulkheads</span>
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2 text-stone-900 dark:text-[#F5F2EB] font-bold text-sm">
+                    <Layers className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                    <span>Deck Dropping &amp; Bulkheads</span>
+                  </div>
+                  <span className="font-mono text-xs font-bold text-amber-700 dark:text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-md">$8/m²</span>
                 </div>
                 <p className="text-xs text-stone-600 dark:text-stone-400 mb-3 leading-relaxed">
-                  Precision suspended drops beneath concrete decks and slabs, stepped multi-level tray bulkheads, and concealed perimeter troughs for warm ambient LED lighting.
+                  Precision suspended drops beneath concrete decks and slabs, stepped multi-level tray bulkheads, and concealed LED lighting troughs.
                 </p>
                 <div className="text-[11px] font-mono text-stone-500 dark:text-stone-400 space-y-1">
                   <div>· Concrete deck drop ceilings</div>
@@ -185,24 +191,30 @@ export const Header: React.FC<HeaderProps> = ({
               </div>
 
               <div className="p-5 rounded-2xl border border-[#E7DFD5] dark:border-[#2E2A25] bg-white dark:bg-[#1A1815]">
-                <div className="flex items-center gap-2 text-stone-900 dark:text-[#F5F2EB] font-bold text-sm mb-2">
-                  <Sparkles className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-                  <span>Wall &amp; Ceiling Skimming</span>
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2 text-stone-900 dark:text-[#F5F2EB] font-bold text-sm">
+                    <Sparkles className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                    <span>Wall &amp; Ceiling Skimming</span>
+                  </div>
+                  <span className="font-mono text-xs font-bold text-amber-700 dark:text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-md">$4/m²</span>
                 </div>
                 <p className="text-xs text-stone-600 dark:text-stone-400 mb-3 leading-relaxed">
-                  Level 5 monolithic plaster skimming using Gyproc RhinoSet and Cretestone over drywall and rough cement-plastered brickwork to eradicate joint flashing.
+                  Level 5 monolithic plaster skimming using Gyproc RhinoSet and Cretestone over drywall and rough cement-plastered walls to eradicate joint flashing.
                 </p>
                 <div className="text-[11px] font-mono text-stone-500 dark:text-stone-400 space-y-1">
                   <div>· Level 5 ASTM C840 / SAZ</div>
                   <div>· Water-burnished mirror finish</div>
-                  <div>· Direct over brickwork &amp; concrete</div>
+                  <div>· Direct over plastered walls &amp; concrete</div>
                 </div>
               </div>
 
               <div className="p-5 rounded-2xl border border-[#E7DFD5] dark:border-[#2E2A25] bg-white dark:bg-[#1A1815]">
-                <div className="flex items-center gap-2 text-stone-900 dark:text-[#F5F2EB] font-bold text-sm mb-2">
-                  <Paintbrush className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-                  <span>Professional Painting</span>
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2 text-stone-900 dark:text-[#F5F2EB] font-bold text-sm">
+                    <Paintbrush className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                    <span>Professional Painting</span>
+                  </div>
+                  <span className="font-mono text-xs font-bold text-amber-700 dark:text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-md">$5/m²</span>
                 </div>
                 <p className="text-xs text-stone-600 dark:text-stone-400 mb-3 leading-relaxed">
                   Full architectural painting services: plaster primer mist coats, acrylic emulsions, matte ceiling whites, and satin velvet finishes with clean lines.
@@ -261,10 +273,10 @@ export const Header: React.FC<HeaderProps> = ({
                     className="block p-3 rounded-xl hover:bg-white dark:hover:bg-[#1E1C19] transition-colors"
                   >
                     <div className="text-sm font-semibold text-stone-900 dark:text-[#F5F2EB]">
-                      RhinoBoard &amp; Brickwork Skimming
+                      RhinoBoard &amp; Wall Skimming
                     </div>
                     <div className="text-xs text-stone-500 dark:text-stone-400 mt-0.5">
-                      Direct skim coats over rough sand-cement plastered brick walls using RhinoSet.
+                      Direct skim coats over rough sand-cement plastered walls using RhinoSet.
                     </div>
                   </a>
                 </div>

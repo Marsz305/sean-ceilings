@@ -33,23 +33,35 @@ export const Hero: React.FC<HeroProps> = ({ onExploreGallery, onOpenCalculator }
                 Welcome to <strong className="text-stone-900 dark:text-white">Sean Ceilings</strong>. We are premier Zimbabwean specialists in <strong className="text-amber-800 dark:text-amber-300">ceiling installation and designing, deck dropping, wall skimming and painting</strong>. From luxury residential villas in Borrowdale Brooke and Highlands to commercial developments, we deliver precision craftsmanship and mirror-smooth finishes.
               </p>
 
-              {/* 4 Core Pillars Pills/Tags */}
+              {/* 4 Core Pillars Pills/Tags with Rates */}
               <div className="grid grid-cols-2 gap-2 max-w-lg mb-8 text-xs font-medium text-stone-700 dark:text-stone-300">
-                <div className="flex items-center gap-2 p-2 rounded-xl bg-white dark:bg-[#1C1A17] border border-[#E7DFD5] dark:border-[#2A2622]">
-                  <Hammer className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                  <span>Ceiling Installation &amp; Designing</span>
+                <div className="flex items-center justify-between p-2 rounded-xl bg-white dark:bg-[#1C1A17] border border-[#E7DFD5] dark:border-[#2A2622]">
+                  <div className="flex items-center gap-2">
+                    <Layers className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                    <span>Deck Dropping</span>
+                  </div>
+                  <span className="font-mono font-bold text-amber-700 dark:text-amber-400 text-[11px]">$8/m²</span>
                 </div>
-                <div className="flex items-center gap-2 p-2 rounded-xl bg-white dark:bg-[#1C1A17] border border-[#E7DFD5] dark:border-[#2A2622]">
-                  <Layers className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                  <span>Deck Dropping &amp; Bulkheads</span>
+                <div className="flex items-center justify-between p-2 rounded-xl bg-white dark:bg-[#1C1A17] border border-[#E7DFD5] dark:border-[#2A2622]">
+                  <div className="flex items-center gap-2">
+                    <Hammer className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                    <span>Roof Traces</span>
+                  </div>
+                  <span className="font-mono font-bold text-amber-700 dark:text-amber-400 text-[11px]">$5/m²</span>
                 </div>
-                <div className="flex items-center gap-2 p-2 rounded-xl bg-white dark:bg-[#1C1A17] border border-[#E7DFD5] dark:border-[#2A2622]">
-                  <Sparkles className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                  <span>Wall &amp; Ceiling Skimming</span>
+                <div className="flex items-center justify-between p-2 rounded-xl bg-white dark:bg-[#1C1A17] border border-[#E7DFD5] dark:border-[#2A2622]">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                    <span>Wall Skimming</span>
+                  </div>
+                  <span className="font-mono font-bold text-amber-700 dark:text-amber-400 text-[11px]">$4/m²</span>
                 </div>
-                <div className="flex items-center gap-2 p-2 rounded-xl bg-white dark:bg-[#1C1A17] border border-[#E7DFD5] dark:border-[#2A2622]">
-                  <Paintbrush className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                  <span>Architectural Painting</span>
+                <div className="flex items-center justify-between p-2 rounded-xl bg-white dark:bg-[#1C1A17] border border-[#E7DFD5] dark:border-[#2A2622]">
+                  <div className="flex items-center gap-2">
+                    <Paintbrush className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                    <span>Painting</span>
+                  </div>
+                  <span className="font-mono font-bold text-amber-700 dark:text-amber-400 text-[11px]">$5/m²</span>
                 </div>
               </div>
             </div>
@@ -149,10 +161,10 @@ export const Hero: React.FC<HeroProps> = ({ onExploreGallery, onOpenCalculator }
 
           <div>
             <div className="text-3xl sm:text-4xl font-bold font-display tracking-tight text-amber-700 dark:text-amber-400 font-mono tabular-nums">
-              From $12/m²
+              $4 &ndash; $8/m²
             </div>
             <div className="text-xs text-stone-500 dark:text-stone-400 mt-1">
-              Direct USD rates in Zimbabwe
+              $8 Deck &middot; $5 Traces &middot; $5 Paint &middot; $4 Skim
             </div>
           </div>
         </div>
