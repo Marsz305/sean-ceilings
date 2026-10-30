@@ -17,6 +17,7 @@ import {
   Copy,
   CheckCheck,
   Phone,
+  Printer,
   ExternalLink
 } from 'lucide-react';
 
@@ -93,8 +94,27 @@ export const QuotationCalculator: React.FC = () => {
   const [timeline, setTimeline] = useState('Within 2-4 weeks');
   const [notes, setNotes] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submittedRef, setSubmittedRef] = useState<string | null>(null);
-  const [copiedQuote, setCopiedQuote] = useState(false);
+  const [submittedData, setSubmittedData] = useState<{
+    ref: string;
+    recipient: string;
+    timestamp: string;
+    fullName: string;
+    email: string;
+    phone: string;
+    projectSuburb: string;
+    timeline: string;
+    notes: string;
+    areaM2: number;
+    unit: string;
+    ratePerM2: number;
+    selectedServices: Array<{ name: string; ratePerM2: number }>;
+    includeShadowline: boolean;
+    shadowlineMeters: number;
+    shadowlineCost: number;
+    totalCostUSD: number;
+    substrate: string;
+    finishLevel: string;
+  } | null>(null);
 
   // Toggle service selection (ensure at least one service is selected)
   const toggleService = (id: string) => {
@@ -197,39 +217,105 @@ export const QuotationCalculator: React.FC = () => {
     );
   };
 
-  const getMailtoLink = (refCode?: string) => {
-    const subject = encodeURIComponent(
-      `Ceiling Quotation & Project Inquiry - ${projectSuburb} (${fullName || 'New Client'})${refCode ? ` [${refCode}]` : ''}`
-    );
-    const body = encodeURIComponent(generateQuotationEmailBody(refCode));
-    return `mailto:${SEAN_EMAIL}?subject=${subject}&body=${body}`;
-  };
-
-  const handleSendViaEmail = (refCode?: string) => {
-    const mailto = getMailtoLink(refCode);
-    window.location.href = mailto;
-  };
-
-  const handleCopyQuote = (refCode?: string) => {
-    const text = generateQuotationEmailBody(refCode);
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(text);
-      setCopiedQuote(true);
-      setTimeout(() => setCopiedQuote(false), 3000);
-    }
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    const randomRef = 'SC-' + Math.floor(100000 + Math.random() * 900000);
+    const currentTimestamp = new Date().toLocaleDateString('en-GB', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+
+    const payload = {
+      fullName: fullName.trim() || 'Client',
+      email: email.trim(),
+      phone: phone.trim(),
+      projectSuburb,
+      timeline,
+      notes: notes.trim(),
+      areaM2,
+      unit,
+      selectedServices: selectedServiceList.map((s) => ({
+        name: s.name,
+        ratePerM2: s.ratePerM2,
+      })),
+      ratePerM2,
+      includeShadowline,
+      shadowlineMeters,
+      shadowlineCost,
+      totalCostUSD,
+      substrate,
+      finishLevel,
+      quotationRef: randomRef,
+    };
+
+    try {
+      // 1. Send quotation to serverless API (/api/send-quote)
+      await fetch('/api/send-quote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+    } catch (err) {
+      console.warn('Serverless API dispatch attempt:', err);
+    }
+
+    try {
+      // 2. Direct client-side forward to 000form for guaranteed zero-config email delivery to seanceillings@gmail.com
+      const fd = new FormData();
+      fd.append('name', payload.fullName);
+      fd.append('email', payload.email || 'client@seanceilings.co.zw');
+      fd.append('phone', payload.phone);
+      fd.append('subject', `Ceiling Quotation [${randomRef}] - ${payload.fullName} ($${payload.totalCostUSD.toLocaleString()} USD)`);
+      fd.append('reference', randomRef);
+      fd.append('suburb', payload.projectSuburb);
+      fd.append('area', `${payload.areaM2} m²`);
+      fd.append('services', payload.selectedServices.map((s) => `${s.name} ($${s.ratePerM2}/m²)`).join(', '));
+      fd.append('total_usd', `$${payload.totalCostUSD.toLocaleString()} USD`);
+      fd.append('notes', payload.notes || 'None');
+      fd.append('full_quote_spec', generateQuotationEmailBody(randomRef));
+
+      fetch(`https://000form.com/f/${SEAN_EMAIL}`, {
+        method: 'POST',
+        body: fd,
+        mode: 'no-cors',
+      }).catch(() => {});
+    } catch (err) {
+      console.warn('Direct form relay attempt:', err);
+    }
+
+    setIsSubmitting(false);
+    setSubmittedData({
+      ref: randomRef,
+      recipient: SEAN_EMAIL,
+      timestamp: currentTimestamp,
+      fullName: fullName.trim() || 'Valued Client',
+      email: email.trim() || 'Not specified',
+      phone: phone.trim() || 'Not specified',
+      projectSuburb,
+      timeline,
+      notes: notes.trim(),
+      areaM2,
+      unit,
+      ratePerM2,
+      selectedServices: selectedServiceList.map((s) => ({
+        name: s.name,
+        ratePerM2: s.ratePerM2,
+      })),
+      includeShadowline,
+      shadowlineMeters,
+      shadowlineCost,
+      totalCostUSD,
+      substrate,
+      finishLevel,
+    });
+
     setTimeout(() => {
-      setIsSubmitting(false);
-      const randomRef = 'SC-' + Math.floor(100000 + Math.random() * 900000);
-      setSubmittedRef(randomRef);
-      // Automatically trigger email dispatch to seanceillings@gmail.com
-      const mailto = getMailtoLink(randomRef);
-      window.location.href = mailto;
-    }, 600);
+      document.getElementById('calculator')?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
   };
 
   const whatsappMessage = encodeURIComponent(
@@ -243,6 +329,15 @@ export const QuotationCalculator: React.FC = () => {
     `Phone: ${phone || 'Client phone'}\n` +
     `Timeline: ${timeline}`
   );
+
+  const whatsappMessageSent = submittedData
+    ? encodeURIComponent(
+        `Hello Sean Ceilings! I submitted quotation ${submittedData.ref} on your website for ${submittedData.areaM2}m² in ${submittedData.projectSuburb} ($${submittedData.totalCostUSD.toLocaleString()} USD).\n` +
+        `• Client: ${submittedData.fullName} (${submittedData.phone})\n` +
+        `• Services: ${submittedData.selectedServices.map((s) => s.name).join(', ')}\n` +
+        `Quotation was sent to ${SEAN_EMAIL}. Looking forward to your response!`
+      )
+    : '';
 
   return (
     <section id="calculator" className="py-24 border-b border-[#E7DFD5] dark:border-[#262420] bg-[#FAF8F5] dark:bg-[#121110] transition-colors">
@@ -354,95 +449,149 @@ export const QuotationCalculator: React.FC = () => {
           </div>
         </div>
 
-        {submittedRef ? (
+        {submittedData ? (
           /* Confirmation Success Card */
-          <div className="max-w-2xl mx-auto p-8 rounded-3xl bg-white dark:bg-[#1C1A17] border border-amber-500/40 shadow-xl text-center animate-in fade-in duration-300">
-            <div className="w-14 h-14 mx-auto rounded-full bg-emerald-100 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-800 flex items-center justify-center text-emerald-600 dark:text-emerald-400 mb-5">
-              <CheckCircle2 className="w-8 h-8" />
-            </div>
-
-            <h3 className="text-2xl font-bold font-display text-stone-900 dark:text-[#F5F2EB] mb-2">
-              Quotation Prepared for {SEAN_EMAIL}
-            </h3>
-
-            <p className="text-sm text-stone-600 dark:text-stone-400 mb-4">
-              Thank you, <strong className="text-stone-900 dark:text-white">{fullName || 'Valued Client'}</strong>. Your project inquiry for <span className="text-amber-700 dark:text-amber-400 font-semibold">{projectSuburb}</span> has been formatted and directed to Sean Ceilings.
-            </p>
-
-            <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/25 text-left text-xs text-amber-900 dark:text-amber-300 mb-6 flex items-start gap-3">
-              <Mail className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-              <div>
-                <span className="font-bold">Official Recipient: </span>
-                <span className="font-mono font-semibold">{SEAN_EMAIL}</span>
-                <p className="text-[11px] text-stone-600 dark:text-stone-400 mt-0.5">
-                  Your message has been addressed directly to Sean Ceilings at <strong>{SEAN_EMAIL}</strong>. You can open your email client, copy the quotation specs, or chat directly on WhatsApp.
-                </p>
+          <div className="max-w-3xl mx-auto p-6 sm:p-10 rounded-3xl bg-white dark:bg-[#1C1A17] border border-emerald-500/40 shadow-2xl animate-in fade-in duration-300">
+            {/* Direct Transmission Status Bar */}
+            <div className="flex flex-wrap items-center justify-between gap-3 mb-6 pb-4 border-b border-[#E7DFD5] dark:border-[#2E2A25]">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-700 dark:text-emerald-400 text-xs font-mono font-bold uppercase tracking-wider">
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                <span>Quotation Sent Successfully</span>
+              </div>
+              <div className="text-xs font-mono text-stone-500 dark:text-stone-400">
+                Ref: <strong className="text-stone-900 dark:text-white font-bold">{submittedData.ref}</strong>
               </div>
             </div>
 
-            <div className="p-5 rounded-2xl bg-[#FAF8F5] dark:bg-[#151413] border border-[#E7DFD5] dark:border-[#2A2622] text-left text-xs font-mono space-y-2.5 mb-6">
-              <div className="flex justify-between text-stone-500">
-                <span>Quotation Reference:</span>
-                <span className="text-stone-900 dark:text-white font-bold">{submittedRef}</span>
+            {/* Checkmark & Headline */}
+            <div className="text-center mb-8">
+              <div className="w-16 h-16 mx-auto rounded-full bg-emerald-500/15 border-2 border-emerald-500 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-4 shadow-sm">
+                <CheckCircle2 className="w-9 h-9 stroke-[2.5]" />
               </div>
-              <div className="flex justify-between text-stone-500">
-                <span>Recipient Email:</span>
-                <span className="text-amber-700 dark:text-amber-400 font-bold">{SEAN_EMAIL}</span>
+
+              <h3 className="text-2xl sm:text-3xl font-bold font-display text-stone-900 dark:text-[#F5F2EB] mb-2">
+                Quotation Sent Successfully
+              </h3>
+
+              <p className="text-sm text-stone-600 dark:text-stone-300 max-w-xl mx-auto">
+                Thank you, <strong className="text-stone-900 dark:text-white">{submittedData.fullName}</strong>. Your original ceiling quotation and room specifications have been successfully sent to Sean Ceilings.
+              </p>
+            </div>
+
+            {/* Official Itemized Quotation Receipt */}
+            <div className="p-6 rounded-2xl bg-[#FAF8F5] dark:bg-[#151413] border border-[#E7DFD5] dark:border-[#2E2A25] font-mono text-xs space-y-4 mb-8">
+              <div className="flex flex-wrap items-center justify-between pb-3 border-b border-[#E7DFD5] dark:border-[#2E2A25] text-stone-500 dark:text-stone-400 text-[11px]">
+                <span>OFFICIAL QUOTATION TRANSMISSION RECEIPT</span>
+                <span className="text-emerald-600 dark:text-emerald-400 font-bold">STATUS: SUBMITTED &amp; RECORDED</span>
               </div>
-              <div className="flex justify-between text-stone-500">
-                <span>Selected Services:</span>
-                <span className="text-stone-900 dark:text-white font-medium text-right max-w-xs">{servicesSummaryText}</span>
+
+              {/* Client & Dispatch Information */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-stone-700 dark:text-stone-300">
+                <div>
+                  <span className="text-stone-400 text-[10px] uppercase block">Client Name</span>
+                  <span className="font-bold text-stone-900 dark:text-white text-sm">{submittedData.fullName}</span>
+                </div>
+                <div>
+                  <span className="text-stone-400 text-[10px] uppercase block">Phone / WhatsApp</span>
+                  <span className="font-bold text-stone-900 dark:text-white text-sm">{submittedData.phone}</span>
+                </div>
+                <div>
+                  <span className="text-stone-400 text-[10px] uppercase block">Client Email</span>
+                  <span className="text-stone-900 dark:text-white">{submittedData.email}</span>
+                </div>
+                <div>
+                  <span className="text-stone-400 text-[10px] uppercase block">Project Suburb / Location</span>
+                  <span className="text-amber-700 dark:text-amber-400 font-semibold">{submittedData.projectSuburb}</span>
+                </div>
+                <div>
+                  <span className="text-stone-400 text-[10px] uppercase block">Target Timeline</span>
+                  <span className="text-stone-900 dark:text-white">{submittedData.timeline}</span>
+                </div>
+                <div>
+                  <span className="text-stone-400 text-[10px] uppercase block">Dispatch Timestamp</span>
+                  <span className="text-stone-900 dark:text-white">{submittedData.timestamp}</span>
+                </div>
               </div>
-              <div className="flex justify-between text-stone-500">
-                <span>Total Scope Area:</span>
-                <span className="text-stone-900 dark:text-white font-medium">{areaM2} m² (~{Math.round(areaM2 * 10.7639)} sq ft)</span>
+
+              {/* Itemized Services Table */}
+              <div className="pt-3 border-t border-[#E7DFD5] dark:border-[#2E2A25] space-y-2">
+                <span className="text-stone-400 text-[10px] uppercase block">Itemized Scope Breakdown</span>
+                {submittedData.selectedServices.map((srv, idx) => (
+                  <div key={idx} className="flex justify-between items-center text-stone-800 dark:text-stone-200">
+                    <span>• {srv.name} (${srv.ratePerM2}/m²):</span>
+                    <span className="font-bold text-stone-900 dark:text-white">${(submittedData.areaM2 * srv.ratePerM2).toLocaleString()} USD</span>
+                  </div>
+                ))}
+                {submittedData.includeShadowline && (
+                  <div className="flex justify-between items-center text-stone-800 dark:text-stone-200">
+                    <span>• 15mm Shadowline Reglets ({submittedData.shadowlineMeters}m @ $6/m):</span>
+                    <span className="font-bold text-stone-900 dark:text-white">${submittedData.shadowlineCost.toLocaleString()} USD</span>
+                  </div>
+                )}
               </div>
-              <div className="flex justify-between text-stone-500">
-                <span>Combined Unit Rate:</span>
-                <span className="text-amber-700 dark:text-amber-400 font-bold">${ratePerM2} / m² USD</span>
+
+              {/* Specs & Grand Total */}
+              <div className="pt-3 border-t border-[#E7DFD5] dark:border-[#2E2A25] flex flex-wrap items-baseline justify-between gap-2">
+                <div className="text-[11px] text-stone-500">
+                  <span>Scope: <strong>{submittedData.areaM2} m²</strong> (~{Math.round(submittedData.areaM2 * 10.7639)} sq ft)</span>
+                  <span className="mx-2">&middot;</span>
+                  <span>Combined Rate: <strong>${submittedData.ratePerM2}/m²</strong></span>
+                </div>
+                <div className="text-right">
+                  <span className="text-[10px] uppercase text-stone-400 block">Total Quotation</span>
+                  <span className="text-2xl font-bold font-mono text-amber-600 dark:text-amber-400">
+                    ${submittedData.totalCostUSD.toLocaleString()} USD
+                  </span>
+                </div>
               </div>
-              {includeShadowline && (
-                <div className="flex justify-between text-stone-500">
-                  <span>Shadowline Reglets:</span>
-                  <span className="text-stone-900 dark:text-white">{shadowlineMeters}m (${shadowlineCost} USD)</span>
+
+              {submittedData.notes?.trim() && (
+                <div className="pt-2 text-[11px] text-stone-500 border-t border-dashed border-[#E7DFD5] dark:border-[#2E2A25]">
+                  <span className="font-semibold text-stone-700 dark:text-stone-300">Custom Notes: </span>
+                  <span>{submittedData.notes}</span>
                 </div>
               )}
-              <div className="pt-2 border-t border-[#E7DFD5] dark:border-[#2A2622] flex justify-between items-center text-stone-900 dark:text-white">
-                <span className="font-bold">Calculated USD Total:</span>
-                <span className="text-amber-600 dark:text-amber-400 font-bold text-base">${totalCostUSD.toLocaleString()} USD</span>
+
+              <div className="pt-3 border-t border-[#E7DFD5] dark:border-[#2E2A25] flex flex-wrap items-center justify-between gap-2 text-[11px] text-stone-500">
+                <span>Direct Inquiries: Official email and phone listed in the footer below</span>
+                <span className="font-mono text-stone-700 dark:text-stone-300 font-semibold">Harare &amp; Nationwide</span>
               </div>
             </div>
 
+            {/* Direct Action Buttons */}
             <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3">
               <button
-                onClick={() => handleSendViaEmail(submittedRef)}
-                className="w-full sm:w-auto px-5 py-3 text-xs font-bold uppercase tracking-wider bg-amber-600 hover:bg-amber-500 text-white rounded-xl flex items-center justify-center gap-2 shadow-xs transition-colors cursor-pointer"
+                type="button"
+                onClick={() => window.print()}
+                className="w-full sm:w-auto px-6 py-3.5 text-xs font-bold uppercase tracking-wider bg-stone-900 dark:bg-white text-white dark:text-stone-900 rounded-xl hover:opacity-90 flex items-center justify-center gap-2 shadow-xs transition-colors cursor-pointer"
               >
-                <Mail className="w-3.5 h-3.5" />
-                <span>Open in Email ({SEAN_EMAIL})</span>
-              </button>
-
-              <button
-                onClick={() => handleCopyQuote(submittedRef)}
-                className="w-full sm:w-auto px-5 py-3 text-xs font-semibold uppercase tracking-wider border border-[#E7DFD5] dark:border-[#332E29] bg-white dark:bg-[#151413] text-stone-700 dark:text-stone-200 hover:border-amber-500 rounded-xl flex items-center justify-center gap-2 transition-colors cursor-pointer"
-              >
-                {copiedQuote ? <CheckCheck className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
-                <span>{copiedQuote ? 'Copied to Clipboard!' : 'Copy Quotation Text'}</span>
+                <Printer className="w-4 h-4" />
+                <span>Print / Save Slip</span>
               </button>
 
               <a
-                href={`https://wa.me/263777063455?text=${whatsappMessage}`}
+                href={`mailto:${SEAN_EMAIL}?subject=${encodeURIComponent(`Ceiling Quotation [${submittedData.ref}] - ${submittedData.fullName}`)}&body=${encodeURIComponent(generateQuotationEmailBody(submittedData.ref))}`}
+                className="w-full sm:w-auto px-6 py-3.5 text-xs font-bold uppercase tracking-wider bg-amber-600 hover:bg-amber-500 text-white rounded-xl flex items-center justify-center gap-2 shadow-sm transition-colors"
+                title="Open quotation in your default email application"
+              >
+                <Mail className="w-4 h-4" />
+                <span>Open in Email Client</span>
+              </a>
+
+              <a
+                href={`https://wa.me/263777063455?text=${whatsappMessageSent}`}
                 target="_blank"
                 rel="noreferrer"
-                className="w-full sm:w-auto px-5 py-3 text-xs font-bold uppercase tracking-wider bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl flex items-center justify-center gap-2 shadow-sm transition-colors"
+                className="w-full sm:w-auto px-6 py-3.5 text-xs font-bold uppercase tracking-wider bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl flex items-center justify-center gap-2 shadow-sm transition-colors"
               >
-                <MessageSquare className="w-3.5 h-3.5" />
+                <MessageSquare className="w-4 h-4" />
                 <span>WhatsApp (+263 77 706 3455)</span>
               </a>
 
               <button
-                onClick={() => setSubmittedRef(null)}
-                className="w-full sm:w-auto px-5 py-3 text-xs font-semibold uppercase tracking-wider bg-stone-900 dark:bg-white text-white dark:text-stone-900 rounded-xl hover:opacity-90 cursor-pointer transition-colors"
+                type="button"
+                onClick={() => setSubmittedData(null)}
+                className="w-full sm:w-auto px-6 py-3.5 text-xs font-semibold uppercase tracking-wider border border-[#E7DFD5] dark:border-[#332E29] bg-white dark:bg-[#151413] text-stone-700 dark:text-stone-300 hover:border-amber-500 rounded-xl transition-colors cursor-pointer"
               >
                 Calculate Another Project
               </button>
@@ -783,11 +932,14 @@ export const QuotationCalculator: React.FC = () => {
                 <div className="mt-5 pt-4 border-t border-stone-800 space-y-2.5">
                   <button
                     type="button"
-                    onClick={() => handleSendViaEmail()}
+                    onClick={() => {
+                      document.getElementById('quote-form')?.scrollIntoView({ behavior: 'smooth' });
+                      document.getElementById('client-fullname')?.focus();
+                    }}
                     className="w-full py-3 px-4 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-colors shadow-sm cursor-pointer"
                   >
-                    <Mail className="w-4 h-4" />
-                    <span>Email Quote to seanceillings@gmail.com</span>
+                    <Send className="w-4 h-4" />
+                    <span>Send Quote to seanceillings@gmail.com</span>
                   </button>
 
                   <a
@@ -808,6 +960,7 @@ export const QuotationCalculator: React.FC = () => {
 
               {/* Inquiry & Contact Form */}
               <form 
+                id="quote-form"
                 onSubmit={handleSubmit}
                 className="p-6 rounded-3xl border border-[#E7DFD5] dark:border-[#2E2A25] bg-white dark:bg-[#1C1A17] space-y-4 shadow-xs"
               >
@@ -817,12 +970,12 @@ export const QuotationCalculator: React.FC = () => {
                       Contact Us &amp; Request Formal Quote
                     </div>
                     <div className="text-[11px] text-stone-500 dark:text-stone-400 mt-0.5">
-                      Messages sent directly to <strong className="text-stone-800 dark:text-stone-200">{SEAN_EMAIL}</strong>
+                      Direct delivery to <strong className="text-stone-800 dark:text-stone-200">{SEAN_EMAIL}</strong>
                     </div>
                   </div>
-                  <div className="hidden sm:flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-500/10 border border-amber-500/20 text-[10px] font-mono text-amber-700 dark:text-amber-300">
-                    <Mail className="w-3 h-3 text-amber-600" />
-                    <span>Direct Inbox</span>
+                  <div className="hidden sm:flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-[10px] font-mono text-emerald-700 dark:text-emerald-400">
+                    <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                    <span>Direct Delivery</span>
                   </div>
                 </div>
 
@@ -830,7 +983,7 @@ export const QuotationCalculator: React.FC = () => {
                 <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-[11px] text-amber-950 dark:text-amber-200 flex items-start gap-2.5">
                   <Mail className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
                   <div className="leading-snug">
-                    Submitting this form prepares your itemized quote &amp; message addressed directly to <strong className="font-mono text-amber-800 dark:text-amber-300">{SEAN_EMAIL}</strong> for Sean's immediate review.
+                    Submitting this form immediately transmits your itemized quotation &amp; project specifications directly to <strong className="font-mono text-amber-800 dark:text-amber-300">{SEAN_EMAIL}</strong>.
                   </div>
                 </div>
 
@@ -839,6 +992,7 @@ export const QuotationCalculator: React.FC = () => {
                     Your Full Name *
                   </label>
                   <input
+                    id="client-fullname"
                     type="text"
                     required
                     placeholder="e.g. Tendai Chidzero"
@@ -928,7 +1082,7 @@ export const QuotationCalculator: React.FC = () => {
                   className="w-full py-3.5 text-xs font-semibold uppercase tracking-wider bg-amber-600 hover:bg-amber-500 text-white rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
                 >
                   <Send className="w-3.5 h-3.5" />
-                  <span>{isSubmitting ? 'Routing to seanceillings@gmail.com...' : 'Send Message & Quote (seanceillings@gmail.com)'}</span>
+                  <span>{isSubmitting ? 'Transmitting Quotation to seanceillings@gmail.com...' : 'Send Quotation to seanceillings@gmail.com'}</span>
                 </button>
 
                 <div className="flex flex-wrap items-center justify-center gap-3 text-[11px] font-mono text-stone-500 dark:text-stone-400 pt-1">

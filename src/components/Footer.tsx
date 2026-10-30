@@ -120,15 +120,22 @@ export const Footer: React.FC = () => {
                   WhatsApp: +263 77 706 3455
                 </a>
               </div>
-              <div className="flex items-center gap-2">
-                <Mail className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                <a
-                  href="mailto:seanceillings@gmail.com"
-                  className="text-stone-700 dark:text-stone-300 hover:text-amber-600 dark:hover:text-amber-400 font-bold transition-colors"
-                  title="Send message or quotation to Sean Ceilings"
-                >
-                  seanceillings@gmail.com
-                </a>
+              <div className="pt-1.5">
+                <div className="flex items-center gap-2.5 p-3 rounded-2xl bg-amber-500/10 dark:bg-amber-500/15 border border-amber-500/30">
+                  <Mail className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
+                  <div className="min-w-0">
+                    <div className="text-[10px] uppercase font-sans text-stone-500 dark:text-stone-400 font-bold tracking-wider">
+                      Official Inquiries &amp; Quotations Email
+                    </div>
+                    <a
+                      href="mailto:seanceillings@gmail.com"
+                      className="text-stone-900 dark:text-amber-300 hover:text-amber-600 dark:hover:text-amber-400 font-bold transition-colors text-xs font-mono break-all"
+                      title="Send message or quotation to Sean Ceilings"
+                    >
+                      seanceillings@gmail.com
+                    </a>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
