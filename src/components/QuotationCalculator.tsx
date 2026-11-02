@@ -95,6 +95,7 @@ export const QuotationCalculator: React.FC = () => {
   const [notes, setNotes] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionStatus, setSubmissionStatus] = useState<{ success: boolean; message: string } | null>(null);
+  const [honeypot, setHoneypot] = useState('');
 
   // Toggle service selection (ensure at least one service is selected)
   const toggleService = (id: string) => {
@@ -251,6 +252,7 @@ export const QuotationCalculator: React.FC = () => {
       shadowlineCost: payload.shadowlineCost,
       substrate: payload.substrate,
       finishLevel: payload.finishLevel,
+      website_hp: honeypot,
     };
 
     let isDelivered = false;
@@ -760,7 +762,7 @@ export const QuotationCalculator: React.FC = () => {
                   </a>
 
                   <div className="text-[11px] font-mono text-center text-stone-400 pt-1">
-                    Direct Quote Delivery: <span className="text-amber-400 font-semibold">{SEAN_EMAIL}</span>
+                    Direct Quote Dispatch: <span className="text-amber-400 font-semibold">Sean Ceilings Estimations Team</span>
                   </div>
                 </div>
               </div>
@@ -769,15 +771,27 @@ export const QuotationCalculator: React.FC = () => {
               <form 
                 id="quote-form"
                 onSubmit={handleSubmit}
-                className="p-6 rounded-3xl border border-[#E7DFD5] dark:border-[#2E2A25] bg-white dark:bg-[#1C1A17] space-y-4 shadow-xs"
+                className="p-6 rounded-3xl border border-[#E7DFD5] dark:border-[#2E2A25] bg-white dark:bg-[#1C1A17] space-y-4 shadow-xs relative"
               >
+                {/* Honeypot Bot Trap (invisible to users, catches malicious automated scripts) */}
+                <input
+                  type="text"
+                  name="website_hp"
+                  value={honeypot}
+                  onChange={(e) => setHoneypot(e.target.value)}
+                  tabIndex={-1}
+                  autoComplete="off"
+                  aria-hidden="true"
+                  style={{ display: 'none', position: 'absolute', opacity: 0, pointerEvents: 'none' }}
+                />
+
                 <div className="flex items-start justify-between gap-2 pb-3 border-b border-[#E7DFD5] dark:border-[#2E2A25]">
                   <div>
                     <div className="text-xs font-mono uppercase text-amber-700 dark:text-amber-400 font-bold tracking-wider">
                       Contact Us &amp; Request Formal Quote
                     </div>
                     <div className="text-[11px] text-stone-500 dark:text-stone-400 mt-0.5">
-                      Direct delivery to <strong className="text-stone-800 dark:text-stone-200">{SEAN_EMAIL}</strong>
+                      Direct delivery to <strong className="text-stone-800 dark:text-stone-200">Sean Ceilings Estimations Team</strong>
                     </div>
                   </div>
                   <div className="hidden sm:flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-[10px] font-mono text-emerald-700 dark:text-emerald-400">
@@ -788,9 +802,9 @@ export const QuotationCalculator: React.FC = () => {
 
                 {/* Direct Delivery Notice Banner */}
                 <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-[11px] text-amber-950 dark:text-amber-200 flex items-start gap-2.5">
-                  <Mail className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                  <ShieldCheck className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
                   <div className="leading-snug">
-                    Submitting this form immediately transmits your itemized quotation &amp; project specifications directly to <strong className="font-mono text-amber-800 dark:text-amber-300">{SEAN_EMAIL}</strong>.
+                    Submitting this form immediately transmits your itemized quotation &amp; project specifications directly to our engineering &amp; estimation desk.
                   </div>
                 </div>
 
@@ -900,14 +914,14 @@ export const QuotationCalculator: React.FC = () => {
                 )}
 
                 <div className="flex flex-wrap items-center justify-center gap-3 text-[11px] font-mono text-stone-500 dark:text-stone-400 pt-1">
-                  <a href={`mailto:${SEAN_EMAIL}`} className="hover:text-amber-600 flex items-center gap-1 transition-colors">
-                    <Mail className="w-3 h-3 text-amber-600" />
-                    <span>{SEAN_EMAIL}</span>
-                  </a>
-                  <span>&middot;</span>
                   <a href={`tel:${SEAN_PHONE.replace(/\s+/g, '')}`} className="hover:text-amber-600 flex items-center gap-1 transition-colors">
                     <Phone className="w-3 h-3 text-amber-600" />
-                    <span>{SEAN_PHONE}</span>
+                    <span>Direct Call: {SEAN_PHONE}</span>
+                  </a>
+                  <span>&middot;</span>
+                  <a href="https://wa.me/263777063455" target="_blank" rel="noreferrer" className="hover:text-emerald-600 flex items-center gap-1 transition-colors">
+                    <MessageSquare className="w-3 h-3 text-emerald-600" />
+                    <span>WhatsApp Inquiry</span>
                   </a>
                 </div>
               </form>

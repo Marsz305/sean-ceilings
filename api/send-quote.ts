@@ -216,7 +216,10 @@ export function buildQuotationEmailHtml(data: QuotationPayload): string {
 
 // Handler function compatible with Vercel Serverless Functions
 export default async function handler(req: any, res: any) {
-  // Set CORS headers
+  // Security response headers
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -242,6 +245,14 @@ export default async function handler(req: any, res: any) {
       } catch {
         // keep as is
       }
+    }
+
+    // Bot trap check
+    if (body?.website_hp || body?.company_role_hp) {
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify({ success: true, delivered: true, message: 'Received' }));
+      return;
     }
 
     const data: QuotationPayload = body || {};

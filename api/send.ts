@@ -4,9 +4,50 @@ const RECEIVING_EMAIL = 'seanceillings@gmail.com';
 const VERIFIED_FROM = 'Sean Ceilings <noreply@seanceillings.co.zw>';
 const OWNER_FALLBACK_REPLY = 'marerec402@gmail.com';
 
+// In-memory sliding-window IP rate limiter
+interface RateLimitEntry {
+  timestamps: number[];
+}
+const rateLimitMap = new Map<string, RateLimitEntry>();
+const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000; // 10 minutes
+const MAX_REQUESTS_PER_WINDOW = 6; // Max 6 quote submissions per IP per 10m
+
+// Clean up stale IP records every 15 minutes
+setInterval(() => {
+  const now = Date.now();
+  for (const [ip, entry] of rateLimitMap.entries()) {
+    entry.timestamps = entry.timestamps.filter((t) => now - t < RATE_LIMIT_WINDOW_MS);
+    if (entry.timestamps.length === 0) {
+      rateLimitMap.delete(ip);
+    }
+  }
+}, 15 * 60 * 1000);
+
+function sanitizeText(input: any, maxLength = 200): string {
+  if (typeof input !== 'string') return '';
+  return input
+    .slice(0, maxLength)
+    .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '')
+    .trim();
+}
+
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+const EMAIL_REGEX = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+
 // Handler for Vercel Serverless Function /api/send
 export default async function handler(req: any, res: any) {
-  // CORS headers
+  // Security response headers
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -24,60 +65,120 @@ export default async function handler(req: any, res: any) {
     return;
   }
 
+  // 1. IP Rate Limiting Check
+  const clientIp = (
+    req.headers['x-forwarded-for']?.split(',')[0]?.trim() ||
+    req.headers['x-real-ip'] ||
+    req.socket?.remoteAddress ||
+    '127.0.0.1'
+  );
+
+  const now = Date.now();
+  const ipData = rateLimitMap.get(clientIp) || { timestamps: [] };
+  ipData.timestamps = ipData.timestamps.filter((t) => now - t < RATE_LIMIT_WINDOW_MS);
+
+  if (ipData.timestamps.length >= MAX_REQUESTS_PER_WINDOW) {
+    res.statusCode = 429;
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify({
+      success: false,
+      error: 'Security rate limit reached. Please wait a few minutes before submitting another quote.',
+    }));
+    return;
+  }
+
   try {
     let body = req.body;
     if (typeof body === 'string') {
       try {
         body = JSON.parse(body);
       } catch {
-        // keep as is
+        res.statusCode = 400;
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify({ success: false, error: 'Malformed JSON payload.' }));
+        return;
       }
     }
 
-    const {
-      name,
-      fullName,
-      email,
-      phone,
-      subject,
-      message,
-      notes,
-      projectSuburb,
-      timeline,
-      areaM2,
-      ratePerM2,
-      totalCostUSD,
-      quotationRef,
-      selectedServices,
-      includeShadowline,
-      shadowlineMeters,
-      shadowlineCost,
-      substrate,
-      finishLevel,
-    } = body || {};
+    if (!body || typeof body !== 'object') {
+      res.statusCode = 400;
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify({ success: false, error: 'Invalid payload.' }));
+      return;
+    }
 
-    const clientName = fullName || name || 'Valued Client';
-    const clientEmail = email || '';
-    const clientPhone = phone || 'Not specified';
-    const ref = quotationRef || 'SC-' + Math.floor(100000 + Math.random() * 900000);
-    const emailSubject = subject || `Ceiling Quotation [${ref}] - ${clientName} (${projectSuburb || 'Harare'}) - $${(totalCostUSD || 0).toLocaleString()} USD`;
+    // 2. Honeypot Bot Trap: Automated bots fill hidden fields
+    if (body.website_hp || body.company_role_hp || body.security_token_hp) {
+      console.warn(`[BOT BLOCKED] Spambot honeypot triggered from IP ${clientIp}`);
+      // Pretend success so bot doesn't retry with altered payloads
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify({
+        success: true,
+        delivered: true,
+        message: 'Quotation received.',
+      }));
+      return;
+    }
 
-    // Construct services HTML list
-    const servicesHtml = Array.isArray(selectedServices) && selectedServices.length > 0
-      ? selectedServices.map((s: any) => `
-          <tr>
-            <td style="padding: 10px 12px; border-bottom: 1px solid #e5e0d8; font-size: 13px; color: #1c1917;">${s.name}</td>
-            <td style="padding: 10px 12px; border-bottom: 1px solid #e5e0d8; font-size: 13px; color: #d97706; font-family: monospace; font-weight: 600;">$${s.ratePerM2} / m²</td>
-            <td style="padding: 10px 12px; border-bottom: 1px solid #e5e0d8; font-size: 13px; color: #1c1917; font-family: monospace; font-weight: 700; text-align: right;">$${((areaM2 || 0) * s.ratePerM2).toLocaleString()} USD</td>
-          </tr>
-        `).join('')
+    // Record submission for rate limiter
+    ipData.timestamps.push(now);
+    rateLimitMap.set(clientIp, ipData);
+
+    // 3. Sanitization & Input Length Guards
+    const clientName = sanitizeText(body.fullName || body.name, 100) || 'Valued Client';
+    const rawEmail = sanitizeText(body.email, 150);
+    const clientPhone = sanitizeText(body.phone, 50) || 'Not specified';
+    const projectSuburb = sanitizeText(body.projectSuburb, 120) || 'Harare';
+    const timeline = sanitizeText(body.timeline, 80) || 'Within 2-4 weeks';
+    const rawNotes = sanitizeText(body.notes || body.message, 2500);
+    const substrate = sanitizeText(body.substrate, 80) || 'Gyproc RhinoBoard';
+    const finishLevel = sanitizeText(body.finishLevel, 80) || 'Level 5 Gyproc RhinoSet Monolith';
+
+    // Validate email format if provided
+    let clientEmail = '';
+    if (rawEmail) {
+      if (!EMAIL_REGEX.test(rawEmail)) {
+        res.statusCode = 400;
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify({ success: false, error: 'Invalid email address format.' }));
+        return;
+      }
+      clientEmail = rawEmail;
+    }
+
+    const rawArea = Number(body.areaM2);
+    const areaM2 = Number.isFinite(rawArea) && rawArea > 0 && rawArea < 100000 ? Math.round(rawArea) : 120;
+    const rawRate = Number(body.ratePerM2);
+    const ratePerM2 = Number.isFinite(rawRate) && rawRate > 0 && rawRate < 500 ? rawRate : 17;
+    const rawTotal = Number(body.totalCostUSD);
+    const totalCostUSD = Number.isFinite(rawTotal) && rawTotal > 0 ? rawTotal : areaM2 * ratePerM2;
+
+    const ref = 'SC-' + Math.floor(100000 + Math.random() * 900000);
+    const emailSubject = `Ceiling Quotation [${ref}] - ${clientName} (${projectSuburb}) - $${totalCostUSD.toLocaleString()} USD`;
+
+    // Construct services list safely with escaping
+    const selectedServices = Array.isArray(body.selectedServices) ? body.selectedServices : [];
+    const servicesHtml = selectedServices.length > 0
+      ? selectedServices.map((s: any) => {
+          const sName = escapeHtml(sanitizeText(s.name, 100));
+          const sRate = Number(s.ratePerM2) || 0;
+          const sSubtotal = (areaM2 * sRate).toLocaleString();
+          return `
+            <tr>
+              <td style="padding: 10px 12px; border-bottom: 1px solid #e5e0d8; font-size: 13px; color: #1c1917;">${sName}</td>
+              <td style="padding: 10px 12px; border-bottom: 1px solid #e5e0d8; font-size: 13px; color: #d97706; font-family: monospace; font-weight: 600;">$${sRate} / m²</td>
+              <td style="padding: 10px 12px; border-bottom: 1px solid #e5e0d8; font-size: 13px; color: #1c1917; font-family: monospace; font-weight: 700; text-align: right;">$${sSubtotal} USD</td>
+            </tr>
+          `;
+        }).join('')
       : '';
 
-    // Construct services plain text list
-    const servicesText = Array.isArray(selectedServices) && selectedServices.length > 0
-      ? selectedServices.map((s: any) => `  • ${s.name}: $${s.ratePerM2}/m² ($${((areaM2 || 0) * s.ratePerM2).toLocaleString()} USD)`).join('\n')
+    const servicesText = selectedServices.length > 0
+      ? selectedServices.map((s: any) => `  • ${sanitizeText(s.name, 100)}: $${Number(s.ratePerM2) || 0}/m² ($${((areaM2) * (Number(s.ratePerM2) || 0)).toLocaleString()} USD)`).join('\n')
       : '';
 
+    // Plain text content for email
     const textContent = `
 ========================================
 NEW CEILING QUOTATION & PROJECT INQUIRY
@@ -94,39 +195,47 @@ CLIENT CONTACT DETAILS:
 • Full Name: ${clientName}
 • Email: ${clientEmail || 'Not provided'}
 • Phone / WhatsApp: ${clientPhone}
-• Project Suburb / Location: ${projectSuburb || 'Harare'}
-• Expected Timeline: ${timeline || 'Within 2-4 weeks'}
+• Project Suburb / Location: ${projectSuburb}
+• Expected Timeline: ${timeline}
 
 ----------------------------------------
 SCOPE & ESTIMATED COSTS (USD):
 ----------------------------------------
-• Scope Area: ${areaM2 || 0} m² (${Math.round((areaM2 || 0) * 10.7639)} sq ft)
-• Combined Unit Rate: $${ratePerM2 || 0} / m² USD
+• Scope Area: ${areaM2} m² (${Math.round(areaM2 * 10.7639)} sq ft)
+• Combined Unit Rate: $${ratePerM2} / m² USD
 • Services Selected:
 ${servicesText}
-${includeShadowline ? `• Shadowline Reglets (15mm): ${shadowlineMeters || 40}m ($${shadowlineCost || 0} USD)\n` : ''}
 ----------------------------------------
-ESTIMATED TOTAL COST: $${(totalCostUSD || 0).toLocaleString()} USD
+ESTIMATED TOTAL COST: $${totalCostUSD.toLocaleString()} USD
 ----------------------------------------
 
 TECHNICAL SPECIFICATIONS:
-• Substrate: ${substrate || 'Gyproc RhinoBoard'}
-• Finish Grade: ${finishLevel || 'Level 5 Gyproc RhinoSet Monolith'}
+• Substrate: ${substrate}
+• Finish Grade: ${finishLevel}
 
 CLIENT NOTES & SPECIAL REQUESTS:
-${message || notes || 'No additional notes provided.'}
+${rawNotes || 'No additional notes provided.'}
 
 ========================================
-Automated dispatch from Sean Ceilings Website (Vercel)
+Automated dispatch from Sean Ceilings Verified System
 Direct response requested for: ${clientEmail || clientPhone}
 `;
+
+    // 4. HTML Email Content with Full HTML Escaping
+    const escName = escapeHtml(clientName);
+    const escEmail = escapeHtml(clientEmail);
+    const escPhone = escapeHtml(clientPhone);
+    const escSuburb = escapeHtml(projectSuburb);
+    const escTimeline = escapeHtml(timeline);
+    const escNotes = escapeHtml(rawNotes);
+    const cleanPhoneDigits = clientPhone.replace(/[^0-9]/g, '').replace(/^263|^0/, '');
 
     const htmlContent = `
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
-  <title>${emailSubject}</title>
+  <title>${escapeHtml(emailSubject)}</title>
 </head>
 <body style="margin: 0; padding: 24px; background-color: #f5f2eb; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #1c1917;">
   <table width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width: 640px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 1px solid #e5e0d8;">
@@ -152,18 +261,24 @@ Direct response requested for: ${clientEmail || clientPhone}
           <table width="100%" style="font-size: 13px; line-height: 1.6;">
             <tr>
               <td width="35%" style="color: #78716c; padding: 3px 0;">Client Name:</td>
-              <td style="color: #1c1917; font-weight: 700; padding: 3px 0;">${clientName}</td>
+              <td style="color: #1c1917; font-weight: 700; padding: 3px 0;">${escName}</td>
             </tr>
             <tr>
               <td style="color: #78716c; padding: 3px 0;">Phone / WhatsApp:</td>
-              <td style="padding: 3px 0;"><a href="tel:${clientPhone}" style="color: #d97706; font-weight: 700; text-decoration: none;">${clientPhone}</a></td>
+              <td style="padding: 3px 0;"><a href="tel:${escPhone}" style="color: #d97706; font-weight: 700; text-decoration: none;">${escPhone}</a></td>
             </tr>
             <tr>
               <td style="color: #78716c; padding: 3px 0;">Client Email:</td>
-              <td style="padding: 3px 0;"><a href="mailto:${clientEmail}" style="color: #d97706; text-decoration: none;">${clientEmail || 'Not provided'}</a></td>
+              <td style="padding: 3px 0;"><a href="mailto:${escEmail}" style="color: #d97706; text-decoration: none;">${escEmail || 'Not provided'}</a></td>
             </tr>
-            ${projectSuburb ? `<tr><td style="color: #78716c; padding: 3px 0;">Project Location:</td><td style="color: #1c1917; font-weight: 600; padding: 3px 0;">${projectSuburb}</td></tr>` : ''}
-            ${timeline ? `<tr><td style="color: #78716c; padding: 3px 0;">Target Timeline:</td><td style="color: #1c1917; padding: 3px 0;">${timeline}</td></tr>` : ''}
+            <tr>
+              <td style="color: #78716c; padding: 3px 0;">Project Location:</td>
+              <td style="color: #1c1917; font-weight: 600; padding: 3px 0;">${escSuburb}</td>
+            </tr>
+            <tr>
+              <td style="color: #78716c; padding: 3px 0;">Target Timeline:</td>
+              <td style="color: #1c1917; padding: 3px 0;">${escTimeline}</td>
+            </tr>
           </table>
         </div>
 
@@ -179,35 +294,28 @@ Direct response requested for: ${clientEmail || clientPhone}
           </thead>
           <tbody>
             ${servicesHtml}
-            ${includeShadowline ? `
-              <tr>
-                <td style="padding: 10px 12px; border-bottom: 1px solid #e5e0d8; font-size: 13px; color: #1c1917;">Shadowline Perimeter Reglets (15mm)</td>
-                <td style="padding: 10px 12px; border-bottom: 1px solid #e5e0d8; font-size: 13px; color: #d97706; font-family: monospace; font-weight: 600;">${shadowlineMeters || 40}m @ $6/m</td>
-                <td style="padding: 10px 12px; border-bottom: 1px solid #e5e0d8; font-size: 13px; color: #1c1917; font-family: monospace; font-weight: 700; text-align: right;">$${shadowlineCost || 0} USD</td>
-              </tr>
-            ` : ''}
           </tbody>
           <tfoot>
             <tr style="background: #121110; color: #ffffff;">
-              <td colspan="2" style="padding: 14px 16px; font-weight: 700; font-size: 14px;">Total Scope: ${areaM2 || 0} m²</td>
-              <td align="right" style="padding: 14px 16px; font-weight: 800; font-size: 18px; color: #f59e0b; font-family: monospace;">$${(totalCostUSD || 0).toLocaleString()} USD</td>
+              <td colspan="2" style="padding: 14px 16px; font-weight: 700; font-size: 14px;">Total Scope: ${areaM2} m²</td>
+              <td align="right" style="padding: 14px 16px; font-weight: 800; font-size: 18px; color: #f59e0b; font-family: monospace;">$${totalCostUSD.toLocaleString()} USD</td>
             </tr>
           </tfoot>
         </table>
         ` : ''}
 
-        ${(message || notes) ? `
+        ${escNotes ? `
         <div style="background: #faf8f5; border: 1px solid #e5e0d8; border-radius: 12px; padding: 16px; margin-bottom: 24px; font-size: 13px; color: #57534e;">
           <h3 style="margin: 0 0 8px 0; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #78716c; font-family: monospace;">Client Message / Specifications:</h3>
-          <p style="margin: 0; line-height: 1.6; color: #1c1917;">${message || notes}</p>
+          <p style="margin: 0; line-height: 1.6; color: #1c1917; white-space: pre-wrap;">${escNotes}</p>
         </div>
         ` : ''}
 
         <table width="100%" cellspacing="0" cellpadding="0">
           <tr>
             <td align="center" style="padding: 10px 0;">
-              <a href="https://wa.me/263${clientPhone.replace(/[^0-9]/g, '').replace(/^263|^0/, '')}" style="display: inline-block; background: #25d366; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 10px; font-weight: 700; font-size: 13px; margin-right: 8px;">Reply via WhatsApp</a>
-              ${clientEmail ? `<a href="mailto:${clientEmail}?subject=RE:%20Sean%20Ceilings%20Quotation%20[${ref}]" style="display: inline-block; background: #d97706; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 10px; font-weight: 700; font-size: 13px;">Reply via Email</a>` : ''}
+              ${cleanPhoneDigits ? `<a href="https://wa.me/263${cleanPhoneDigits}" style="display: inline-block; background: #25d366; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 10px; font-weight: 700; font-size: 13px; margin-right: 8px;">Reply via WhatsApp</a>` : ''}
+              ${clientEmail ? `<a href="mailto:${escEmail}?subject=RE:%20Sean%20Ceilings%20Quotation%20[${ref}]" style="display: inline-block; background: #d97706; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 10px; font-weight: 700; font-size: 13px;">Reply via Email</a>` : ''}
             </td>
           </tr>
         </table>
@@ -215,7 +323,7 @@ Direct response requested for: ${clientEmail || clientPhone}
     </tr>
     <tr>
       <td style="background: #faf8f5; padding: 18px 32px; border-top: 1px solid #e5e0d8; text-align: center; font-size: 11px; color: #78716c;">
-        Sean Ceilings Zimbabwe &middot; Harare & Nationwide &middot; Contact: ${RECEIVING_EMAIL} &middot; +263 77 706 3455
+        Sean Ceilings Zimbabwe &middot; Harare & Nationwide &middot; Official Inquiries: ${RECEIVING_EMAIL} &middot; +263 77 706 3455
       </td>
     </tr>
   </table>
@@ -279,7 +387,7 @@ Direct response requested for: ${clientEmail || clientPhone}
     res.setHeader('Content-Type', 'application/json');
     res.end(JSON.stringify({
       success: false,
-      error: error.message || 'Unable to send email.',
+      error: 'An internal error occurred while processing the quotation.',
     }));
   }
 }
