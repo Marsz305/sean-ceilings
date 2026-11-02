@@ -259,11 +259,11 @@ export default async function handler(req: any, res: any) {
     if (process.env.RESEND_API_KEY) {
       try {
         const resend = new Resend(process.env.RESEND_API_KEY);
-        const primaryFrom = process.env.RESEND_FROM || 'Sean Ceilings <onboarding@resend.dev>';
-        const replyToEmails = data.email ? [data.email, SENDER_EMAIL] : [SENDER_EMAIL];
+        const fromAddress = process.env.RESEND_FROM || 'Sean Ceilings <notifications@seanceillings.co.zw>';
+        const replyToEmails = data.email ? [data.email, 'marerec402@gmail.com'] : ['marerec402@gmail.com'];
 
-        let { error: resendError } = await resend.emails.send({
-          from: primaryFrom,
+        let { data: resendData, error: resendError } = await resend.emails.send({
+          from: fromAddress,
           to: [SEAN_EMAIL],
           replyTo: replyToEmails,
           subject: subject,
@@ -271,22 +271,11 @@ export default async function handler(req: any, res: any) {
           html: htmlContent,
         });
 
-        if (resendError && primaryFrom !== 'Sean Ceilings <onboarding@resend.dev>') {
-          const fallback = await resend.emails.send({
-            from: 'Sean Ceilings <onboarding@resend.dev>',
-            to: [SEAN_EMAIL],
-            replyTo: replyToEmails,
-            subject: subject,
-            text: textContent,
-            html: htmlContent,
-          });
-          if (!fallback.error) {
-            sent = true;
-            providerUsed = 'resend';
-          }
-        } else if (!resendError) {
+        if (!resendError) {
           sent = true;
           providerUsed = 'resend';
+        } else {
+          console.warn('Resend send error:', resendError);
         }
       } catch (err) {
         console.warn('Resend dispatch error:', err);

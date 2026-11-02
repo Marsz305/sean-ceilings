@@ -1,7 +1,8 @@
 import { Resend } from 'resend';
 
 const RECEIVING_EMAIL = 'seanceillings@gmail.com';
-const SENDER_EMAIL = 'carlmax1705@gmail.com';
+const VERIFIED_FROM = 'Sean Ceilings <notifications@seanceillings.co.zw>';
+const OWNER_FALLBACK_REPLY = 'marerec402@gmail.com';
 
 // Handler for Vercel Serverless Function /api/send
 export default async function handler(req: any, res: any) {
@@ -59,9 +60,9 @@ export default async function handler(req: any, res: any) {
     const clientEmail = email || '';
     const clientPhone = phone || 'Not specified';
     const ref = quotationRef || 'SC-' + Math.floor(100000 + Math.random() * 900000);
-    const emailSubject = subject || `New Quotation & Project Inquiry [${ref}] - ${clientName} (${projectSuburb || 'Harare'})`;
+    const emailSubject = subject || `Ceiling Quotation [${ref}] - ${clientName} (${projectSuburb || 'Harare'}) - $${(totalCostUSD || 0).toLocaleString()} USD`;
 
-    // Construct services HTML list if available
+    // Construct services HTML list
     const servicesHtml = Array.isArray(selectedServices) && selectedServices.length > 0
       ? selectedServices.map((s: any) => `
           <tr>
@@ -71,6 +72,54 @@ export default async function handler(req: any, res: any) {
           </tr>
         `).join('')
       : '';
+
+    // Construct services plain text list
+    const servicesText = Array.isArray(selectedServices) && selectedServices.length > 0
+      ? selectedServices.map((s: any) => `  • ${s.name}: $${s.ratePerM2}/m² ($${((areaM2 || 0) * s.ratePerM2).toLocaleString()} USD)`).join('\n')
+      : '';
+
+    const textContent = `
+========================================
+NEW CEILING QUOTATION & PROJECT INQUIRY
+Sean Ceilings Zimbabwe
+========================================
+
+QUOTATION REFERENCE: ${ref}
+RECIPIENT: ${RECEIVING_EMAIL}
+DATE: ${new Date().toLocaleString('en-GB', { timeZone: 'Africa/Harare' })} (Harare Time)
+
+----------------------------------------
+CLIENT CONTACT DETAILS:
+----------------------------------------
+• Full Name: ${clientName}
+• Email: ${clientEmail || 'Not provided'}
+• Phone / WhatsApp: ${clientPhone}
+• Project Suburb / Location: ${projectSuburb || 'Harare'}
+• Expected Timeline: ${timeline || 'Within 2-4 weeks'}
+
+----------------------------------------
+SCOPE & ESTIMATED COSTS (USD):
+----------------------------------------
+• Scope Area: ${areaM2 || 0} m² (${Math.round((areaM2 || 0) * 10.7639)} sq ft)
+• Combined Unit Rate: $${ratePerM2 || 0} / m² USD
+• Services Selected:
+${servicesText}
+${includeShadowline ? `• Shadowline Reglets (15mm): ${shadowlineMeters || 40}m ($${shadowlineCost || 0} USD)\n` : ''}
+----------------------------------------
+ESTIMATED TOTAL COST: $${(totalCostUSD || 0).toLocaleString()} USD
+----------------------------------------
+
+TECHNICAL SPECIFICATIONS:
+• Substrate: ${substrate || 'Gyproc RhinoBoard'}
+• Finish Grade: ${finishLevel || 'Level 5 Gyproc RhinoSet Monolith'}
+
+CLIENT NOTES & SPECIAL REQUESTS:
+${message || notes || 'No additional notes provided.'}
+
+========================================
+Automated dispatch from Sean Ceilings Website (Vercel)
+Direct response requested for: ${clientEmail || clientPhone}
+`;
 
     const htmlContent = `
 <!DOCTYPE html>
@@ -177,87 +226,48 @@ export default async function handler(req: any, res: any) {
     const apiKey = process.env.RESEND_API_KEY;
     if (!apiKey) {
       console.warn('RESEND_API_KEY environment variable is not defined on Vercel.');
-      // Return 200 with notice so UX doesn't crash
       res.statusCode = 200;
       res.setHeader('Content-Type', 'application/json');
       res.end(JSON.stringify({
         success: true,
-        message: 'Quotation received. Note: RESEND_API_KEY is not configured yet.',
+        message: 'Quotation received. Note: RESEND_API_KEY is not configured yet on Vercel.',
         quotationRef: ref,
       }));
       return;
     }
 
     const resend = new Resend(apiKey);
+    const fromAddress = process.env.RESEND_FROM || VERIFIED_FROM;
+    const replyToAddress = clientEmail ? [clientEmail, OWNER_FALLBACK_REPLY] : [OWNER_FALLBACK_REPLY];
 
-    // Primary sender option from env or configured verified domain, fallback to onboarding@resend.dev
-    const primaryFrom = process.env.RESEND_FROM || `Sean Ceilings <onboarding@resend.dev>`;
-    const fallbackFrom = `Sean Ceilings <onboarding@resend.dev>`;
-
-    let resendResult: any = null;
-    let resendError: any = null;
-
-    // Attempt 1: Try sending with primaryFrom
-    try {
-      const { data, error } = await resend.emails.send({
-        from: primaryFrom,
-        to: [RECEIVING_EMAIL],
-        replyTo: clientEmail ? [clientEmail, SENDER_EMAIL] : [SENDER_EMAIL],
-        subject: emailSubject,
-        html: htmlContent,
-      });
-
-      if (error) {
-        resendError = error;
-      } else {
-        resendResult = data;
-      }
-    } catch (err: any) {
-      resendError = err;
-    }
-
-    // Attempt 2: If primary sender failed due to unverified domain, fallback to onboarding@resend.dev
-    if (resendError && primaryFrom !== fallbackFrom) {
-      try {
-        const { data, error } = await resend.emails.send({
-          from: fallbackFrom,
-          to: [RECEIVING_EMAIL],
-          replyTo: clientEmail ? [clientEmail, SENDER_EMAIL] : [SENDER_EMAIL],
-          subject: emailSubject,
-          html: htmlContent,
-        });
-
-        if (!error) {
-          resendResult = data;
-          resendError = null;
-        } else {
-          resendError = error;
-        }
-      } catch (err: any) {
-        resendError = err;
-      }
-    }
+    const { data: resendData, error: resendError } = await resend.emails.send({
+      from: fromAddress,
+      to: [RECEIVING_EMAIL],
+      replyTo: replyToAddress,
+      subject: emailSubject,
+      html: htmlContent,
+      text: textContent,
+    });
 
     if (resendError) {
-      console.error('Resend delivery failed:', resendError);
-      res.statusCode = 200; // Return 200 with details so frontend confirmation displays
+      console.error('Resend delivery error:', resendError);
+      res.statusCode = 200;
       res.setHeader('Content-Type', 'application/json');
       res.end(JSON.stringify({
-        success: true,
-        delivered: false,
+        success: false,
         error: resendError.message || resendError,
         quotationRef: ref,
       }));
       return;
     }
 
-    console.log(`[RESEND SUCCESS] Quotation ${ref} sent to ${RECEIVING_EMAIL}`);
+    console.log(`[RESEND SUCCESS] Quotation ${ref} sent from ${fromAddress} to ${RECEIVING_EMAIL}`);
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');
     res.end(JSON.stringify({
       success: true,
       delivered: true,
-      data: resendResult,
+      data: resendData,
       quotationRef: ref,
       message: 'Email sent successfully via Resend!',
     }));
