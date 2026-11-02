@@ -1,7 +1,7 @@
 import { Resend } from 'resend';
 
 const RECEIVING_EMAIL = 'seanceillings@gmail.com';
-const VERIFIED_FROM = 'Sean Ceilings <notifications@seanceillings.co.zw>';
+const VERIFIED_FROM = 'Sean Ceilings <noreply@seanceillings.co.zw>';
 const OWNER_FALLBACK_REPLY = 'marerec402@gmail.com';
 
 // Handler for Vercel Serverless Function /api/send

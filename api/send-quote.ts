@@ -259,8 +259,8 @@ export default async function handler(req: any, res: any) {
     if (process.env.RESEND_API_KEY) {
       try {
         const resend = new Resend(process.env.RESEND_API_KEY);
-        const fromAddress = process.env.RESEND_FROM || 'Sean Ceilings <notifications@seanceillings.co.zw>';
-        const replyToEmails = data.email ? [data.email, 'marerec402@gmail.com'] : ['marerec402@gmail.com'];
+        const fromAddress = process.env.RESEND_FROM || 'Sean Ceilings <noreply@seanceillings.co.zw>';
+        const replyToEmails = data.email || 'marerec402@gmail.com';
 
         let { data: resendData, error: resendError } = await resend.emails.send({
           from: fromAddress,
