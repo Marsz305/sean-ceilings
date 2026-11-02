@@ -286,16 +286,22 @@ export const QuotationCalculator: React.FC = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(emailPayload),
       });
-      if (res.ok) {
-        const data = await res.json();
+      const text = await res.text();
+      try {
+        const data = JSON.parse(text);
         if (data.delivered) {
           isDelivered = true;
           deliveryNote = 'Email sent to seanceillings@gmail.com via Resend!';
         } else if (data.error) {
           deliveryNote = typeof data.error === 'string' ? data.error : JSON.stringify(data.error);
         }
+      } catch {
+        if (!res.ok) {
+          deliveryNote = `Endpoint error (${res.status}): Please verify Vercel function deployment.`;
+        }
       }
-    } catch (err) {
+    } catch (err: any) {
+      deliveryNote = `Request error: ${err.message || 'Unable to reach email service'}`;
       console.warn('Vercel Resend /api/send attempt:', err);
     }
 

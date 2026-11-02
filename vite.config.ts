@@ -2,14 +2,15 @@ import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 import {defineConfig, type Plugin} from 'vite';
-import handler from './api/send-quote';
+import sendQuoteHandler from './api/send-quote';
+import sendHandler from './api/send';
 
 function apiDevPlugin(): Plugin {
   return {
     name: 'api-dev-server',
     configureServer(server) {
       server.middlewares.use(async (req, res, next) => {
-        if (req.url && req.url.startsWith('/api/send-quote')) {
+        if (req.url && (req.url.startsWith('/api/send-quote') || req.url.startsWith('/api/send'))) {
           let body = '';
           req.on('data', (chunk) => {
             body += chunk;
@@ -20,7 +21,11 @@ function apiDevPlugin(): Plugin {
             } catch {
               (req as any).body = {};
             }
-            await handler(req, res);
+            if (req.url && req.url.startsWith('/api/send-quote')) {
+              await sendQuoteHandler(req, res);
+            } else {
+              await sendHandler(req, res);
+            }
           });
           return;
         }
