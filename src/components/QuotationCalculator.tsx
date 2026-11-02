@@ -114,6 +114,8 @@ export const QuotationCalculator: React.FC = () => {
     totalCostUSD: number;
     substrate: string;
     finishLevel: string;
+    isDelivered?: boolean;
+    deliveryNote?: string;
   } | null>(null);
 
   // Toggle service selection (ensure at least one service is selected)
@@ -274,13 +276,25 @@ export const QuotationCalculator: React.FC = () => {
       finishLevel: payload.finishLevel,
     };
 
+    let isDelivered = false;
+    let deliveryNote = '';
+
     try {
       // 1. Send via Resend Vercel serverless function (/api/send)
-      await fetch('/api/send', {
+      const res = await fetch('/api/send', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(emailPayload),
       });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.delivered) {
+          isDelivered = true;
+          deliveryNote = 'Email sent to seanceillings@gmail.com via Resend!';
+        } else if (data.error) {
+          deliveryNote = typeof data.error === 'string' ? data.error : JSON.stringify(data.error);
+        }
+      }
     } catch (err) {
       console.warn('Vercel Resend /api/send attempt:', err);
     }
@@ -297,7 +311,7 @@ export const QuotationCalculator: React.FC = () => {
     }
 
     try {
-      // 2. Direct client-side forward to 000form for guaranteed zero-config email delivery to seanceillings@gmail.com
+      // 3. Direct client-side forward to 000form for guaranteed zero-config email delivery to seanceillings@gmail.com
       const fd = new FormData();
       fd.append('name', payload.fullName);
       fd.append('email', payload.email || 'client@seanceilings.co.zw');
@@ -344,6 +358,8 @@ export const QuotationCalculator: React.FC = () => {
       totalCostUSD,
       substrate,
       finishLevel,
+      isDelivered,
+      deliveryNote,
     });
 
     setTimeout(() => {
@@ -509,6 +525,16 @@ export const QuotationCalculator: React.FC = () => {
               <p className="text-sm text-stone-600 dark:text-stone-300 max-w-xl mx-auto">
                 Thank you, <strong className="text-stone-900 dark:text-white">{submittedData.fullName}</strong>. Your original ceiling quotation and room specifications have been successfully sent to Sean Ceilings.
               </p>
+
+              {submittedData.deliveryNote && (
+                <div className={`mt-3.5 px-4 py-2 rounded-xl text-xs font-mono inline-block max-w-xl ${
+                  submittedData.isDelivered
+                    ? 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-700 dark:text-emerald-400'
+                    : 'bg-amber-500/10 border border-amber-500/30 text-amber-800 dark:text-amber-300'
+                }`}>
+                  {submittedData.deliveryNote}
+                </div>
+              )}
             </div>
 
             {/* Official Itemized Quotation Receipt */}

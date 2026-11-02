@@ -229,8 +229,9 @@ Direct response requested for: ${clientEmail || clientPhone}
       res.statusCode = 200;
       res.setHeader('Content-Type', 'application/json');
       res.end(JSON.stringify({
-        success: true,
-        message: 'Quotation received. Note: RESEND_API_KEY is not configured yet on Vercel.',
+        success: false,
+        delivered: false,
+        error: 'RESEND_API_KEY environment variable is not set on this server.',
         quotationRef: ref,
       }));
       return;
