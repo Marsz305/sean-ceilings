@@ -79,8 +79,8 @@ export const QuotationCalculator: React.FC = () => {
 
   const [substrate, setSubstrate] = useState<'rhinoboard' | 'plastered-wall' | 'textured' | 'concrete'>('rhinoboard');
   const [finishLevel, setFinishLevel] = useState<'level5' | 'level4' | 'cretestone'>('level5');
-  const [includeShadowline, setIncludeShadowline] = useState<boolean>(true);
-  const [shadowlineMeters, setShadowlineMeters] = useState<number>(40);
+  const includeShadowline = false;
+  const shadowlineMeters = 0;
 
   // Official Sean Ceilings Contact Information
   const SEAN_EMAIL = 'seanceillings@gmail.com';
@@ -147,11 +147,11 @@ export const QuotationCalculator: React.FC = () => {
   const ratePerM2 = selectedServiceList.reduce((sum, s) => sum + s.ratePerM2, 0);
 
   const baseServiceCost = areaM2 * ratePerM2;
-  const shadowlineCost = includeShadowline ? shadowlineMeters * 6 : 0;
-  const totalCostUSD = baseServiceCost + shadowlineCost;
+  const shadowlineCost = 0;
+  const totalCostUSD = baseServiceCost;
 
   const estimatedBags = Math.ceil(areaM2 * (selectedServices['wall-skimming'] ? 0.28 : 0.12));
-  const estimatedDays = Math.max(2, Math.ceil(areaM2 / 35) + (selectedServices['deck-dropping'] ? 1 : 0) + (includeShadowline ? 1 : 0));
+  const estimatedDays = Math.max(2, Math.ceil(areaM2 / 35) + (selectedServices['deck-dropping'] ? 1 : 0));
   const displayArea = unit === 'm2' ? areaM2 : Math.round(areaM2 * 10.7639);
 
   const servicesSummaryText = selectedServiceList
@@ -183,7 +183,6 @@ export const QuotationCalculator: React.FC = () => {
       `• Total Area: ${areaM2} m² (~${Math.round(areaM2 * 10.7639)} sq ft)\n` +
       `• Combined Service Rate: $${ratePerM2} / m² USD\n` +
       `• Selected Services:\n${breakdown}\n` +
-      `${includeShadowline ? `• Shadowline Reglets: ${shadowlineMeters}m ($${shadowlineCost} USD)\n` : ''}` +
       `• Total Estimated Cost: $${totalCostUSD.toLocaleString()} USD\n` +
       `• Substrate: ${substrate}\n` +
       `• Desired Finish: ${finishLevel === 'level5' ? 'Level 5 Gyproc RhinoSet Monolith' : finishLevel === 'level4' ? 'Level 4 Standard Jointing' : 'Cretestone High-Bond'}\n` +
@@ -695,40 +694,6 @@ export const QuotationCalculator: React.FC = () => {
                 </div>
               </div>
 
-              {/* 5. Shadowline Details Option */}
-              <div className="flex items-center justify-between p-4 rounded-2xl border border-[#E7DFD5] dark:border-[#2E2A25] bg-white dark:bg-[#1C1A17]">
-                <div>
-                  <div className="text-xs font-bold text-stone-900 dark:text-[#F5F2EB]">
-                    Include 15mm Shadowline Perimeter Reglets ($6/m)
-                  </div>
-                  <div className="text-[11px] text-stone-500 dark:text-stone-400 mt-0.5">
-                    Replaces timber cornices with modern negative ceiling reveals
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  {includeShadowline && (
-                    <div className="flex items-center gap-1.5 text-xs font-mono">
-                      <input
-                        type="number"
-                        min="5"
-                        max="300"
-                        value={shadowlineMeters}
-                        onChange={(e) => setShadowlineMeters(Number(e.target.value))}
-                        className="w-16 px-2 py-1 bg-[#FAF8F5] dark:bg-[#151413] border border-[#E7DFD5] dark:border-[#332E29] rounded-lg text-center"
-                      />
-                      <span className="text-stone-400">m</span>
-                    </div>
-                  )}
-
-                  <input
-                    type="checkbox"
-                    checked={includeShadowline}
-                    onChange={(e) => setIncludeShadowline(e.target.checked)}
-                    className="w-4 h-4 rounded accent-amber-600 cursor-pointer"
-                  />
-                </div>
-              </div>
             </div>
 
             {/* Right 5 Columns: Summary & Submission Form */}
@@ -758,13 +723,6 @@ export const QuotationCalculator: React.FC = () => {
                       <span className="font-bold text-white">${(areaM2 * srv.ratePerM2).toLocaleString()} USD</span>
                     </div>
                   ))}
-
-                  {includeShadowline && (
-                    <div className="flex justify-between items-center text-stone-300">
-                      <span>• Shadowline Reglets ({shadowlineMeters}m @ $6):</span>
-                      <span className="font-bold text-white">${shadowlineCost.toLocaleString()} USD</span>
-                    </div>
-                  )}
                 </div>
 
                 <div className="grid grid-cols-2 gap-3 pt-4 border-t border-stone-800 text-xs font-mono">
